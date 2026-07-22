@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#1c1917"/>
+  <rect x="5" y="4" width="22" height="24" rx="1" fill="#ede4d0" stroke="#ba9e74" stroke-width="1"/>
+  <!-- Masthead line -->
+  <rect x="7" y="7" width="18" height="3" fill="#1c1917"/>
+  <rect x="7" y="11" width="18" height="1" fill="#78350f"/>
+  <!-- Headline -->
+  <rect x="7" y="13" width="11" height="2" fill="#1c1917"/>
+  <!-- Text lines -->
+  <rect x="7" y="16" width="11" height="1" fill="#525252"/>
+  <rect x="7" y="18" width="11" height="1" fill="#525252"/>
+  <rect x="7" y="20" width="11" height="1" fill="#525252"/>
+  <rect x="7" y="22" width="11" height="1" fill="#525252"/>
+  <!-- Image box -->
+  <rect x="19" y="13" width="6" height="7" fill="#d4d4d4" stroke="#525252" stroke-width="0.5"/>
+  <circle cx="22" cy="15.5" r="1.5" fill="#78350f"/>
+  <!-- Secondary article -->
+  <rect x="19" y="21" width="6" height="1" fill="#525252"/>
+  <rect x="19" y="23" width="6" height="1" fill="#525252"/>
+</svg>

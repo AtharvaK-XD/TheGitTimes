@@ -1,0 +1,451 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #0c0a09;
+    color: #1a1615;
+    font-family: 'EB Garamond', 'Old Standard TT', serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ================================================================
+   PAPER REALISM — Multi-layer aged newsprint
+   ================================================================ */
+
+.paper-texture {
+  background-color: #d8c49d;
+  position: relative;
+}
+
+/* Layered heavy noise grain + paper pulp fibers */
+.paper-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    /* Fine paper fiber grain - higher contrast */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E"),
+    /* Coarser fibrous texture overlay */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.09'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Realistic Paper Fold Creases (horizontal & vertical center fold lines) */
+.paper-creases {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Vertical center fold shadow */
+    linear-gradient(to right, transparent 48.5%, rgba(60, 40, 15, 0.12) 49.5%, rgba(255, 240, 200, 0.15) 50%, rgba(60, 40, 15, 0.08) 50.5%, transparent 51.5%),
+    /* Horizontal fold shadow */
+    linear-gradient(to bottom, transparent 49%, rgba(60, 40, 15, 0.1) 49.8%, rgba(255, 245, 210, 0.14) 50%, rgba(60, 40, 15, 0.06) 50.2%, transparent 51%),
+    /* Diagonal corner crease */
+    linear-gradient(135deg, rgba(80, 50, 20, 0.08) 0%, transparent 15%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Aged discoloration gradient — deep yellowed/browned edges & foxing zones */
+.paper-aged-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Vignette dark burned edges */
+    radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(135, 95, 45, 0.18) 75%, rgba(95, 60, 25, 0.35) 100%),
+    /* Irregular yellowed aging patches */
+    radial-gradient(ellipse at 20% 15%, rgba(185, 140, 65, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 75%, rgba(165, 120, 50, 0.2) 0%, transparent 45%),
+    radial-gradient(ellipse at 75% 15%, rgba(175, 130, 55, 0.18) 0%, transparent 40%),
+    radial-gradient(ellipse at 15% 85%, rgba(150, 105, 40, 0.2) 0%, transparent 50%),
+    /* Top & bottom darkening */
+    linear-gradient(to bottom, rgba(140, 100, 45, 0.15) 0%, transparent 12%, transparent 88%, rgba(120, 80, 35, 0.22) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Foxing spots — those brown age spots on old paper */
+.foxing-spots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.foxing-spot {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(120, 75, 25, 0.35) 0%, rgba(140, 90, 35, 0.15) 45%, transparent 70%);
+}
+
+/* Coffee Stain Effect — dark realistic ring with cup mark */
+.coffee-stain {
+  position: relative;
+}
+.coffee-stain::after {
+  content: "";
+  position: absolute;
+  top: 4%;
+  right: 8%;
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(85, 50, 20, 0.08) 35%, transparent 40%, transparent 80%, rgba(95, 55, 22, 0.15) 83%, rgba(80, 45, 18, 0.22) 88%, transparent 94%);
+  box-shadow:
+    inset 0 0 25px rgba(80, 45, 18, 0.12),
+    0 0 20px rgba(80, 45, 18, 0.08);
+  pointer-events: none;
+  transform: rotate(-15deg) scaleY(0.88);
+  filter: blur(0.6px);
+  z-index: 4;
+}
+
+/* Second coffee/tea stain on bottom left */
+.coffee-stain-2::before {
+  content: "";
+  position: absolute;
+  bottom: 12%;
+  left: 3%;
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 50%, rgba(95, 55, 20, 0.12) 58%, rgba(80, 45, 15, 0.18) 72%, transparent 78%);
+  pointer-events: none;
+  transform: rotate(25deg) scaleX(1.15);
+  filter: blur(0.5px);
+  z-index: 4;
+}
+
+/* Deckled / Torn Paper Edges — more irregular */
+.deckled-paper {
+  clip-path: polygon(
+    0% 0.3%, 1% 0.1%, 2.5% 0.6%, 4% 0%, 5.5% 0.5%, 7% 0.1%, 9% 0.7%, 11% 0.2%, 13% 0.8%, 15% 0.1%, 17% 0.6%, 19% 0%, 21% 0.5%, 24% 0.2%, 27% 0.8%, 30% 0.1%, 33% 0.6%, 36% 0.3%, 39% 0.9%, 42% 0.1%, 45% 0.7%, 48% 0.2%, 50% 0.5%, 52% 0%, 55% 0.8%, 58% 0.3%, 61% 0.7%, 64% 0.1%, 67% 0.6%, 70% 0.2%, 73% 0.9%, 76% 0.1%, 79% 0.5%, 82% 0.3%, 85% 0.8%, 88% 0%, 91% 0.7%, 94% 0.2%, 97% 0.6%, 100% 0.1%,
+    100% 5%, 99.8% 10%, 100% 15%, 99.7% 22%, 100% 28%, 99.8% 35%, 100% 42%, 99.6% 50%, 100% 57%, 99.8% 64%, 99.9% 70%, 99.7% 78%, 100% 85%, 99.8% 92%, 100% 99.5%,
+    97% 100%, 94% 99.4%, 91% 99.9%, 88% 99.2%, 85% 99.8%, 82% 99.1%, 79% 99.7%, 76% 99.3%, 73% 99.9%, 70% 99.1%, 67% 99.6%, 64% 99.3%, 61% 99.8%, 58% 99.2%, 55% 99.7%, 52% 99.1%, 50% 99.5%, 48% 99.2%, 45% 99.8%, 42% 99.1%, 39% 99.6%, 36% 99.3%, 33% 99.9%, 30% 99.2%, 27% 99.7%, 24% 99.4%, 21% 99.8%, 19% 99.1%, 17% 99.5%, 15% 99.3%, 13% 99.8%, 11% 99.2%, 9% 99.6%, 7% 99.1%, 5.5% 99.5%, 4% 99.3%, 2.5% 99.7%, 1% 99.2%, 0% 99.5%,
+    0.2% 92%, 0% 85%, 0.3% 78%, 0.1% 70%, 0.4% 64%, 0% 57%, 0.3% 50%, 0.1% 42%, 0.4% 35%, 0% 28%, 0.3% 22%, 0.1% 15%, 0.2% 10%, 0% 5%
+  );
+}
+
+/* ================================================================
+   PHOTO REALISM
+   ================================================================ */
+
+.torn-photo-frame {
+  background: linear-gradient(135deg, #f5efe2, #ede4d0);
+  padding: 6px 6px 22px 6px;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transform: rotate(-1.8deg);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+.torn-photo-frame:hover {
+  transform: rotate(-0.3deg) scale(1.02) translateY(-2px);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15),
+    0 16px 35px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Halftone dot effect via SVG filter overlay + sepia */
+.halftone-sepia {
+  filter: sepia(0.7) contrast(1.3) brightness(0.85) grayscale(0.25);
+}
+
+/* Ink print dot texture overlay for photos */
+.halftone-dots-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 4px 4px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ================================================================
+   STICKY NOTE / PULL QUOTE
+   ================================================================ */
+
+.sticky-note {
+  background: linear-gradient(145deg, #f7eccc, #efdeb0);
+  border-left: 3px solid #c9a04d;
+  box-shadow:
+    3px 5px 10px rgba(0, 0, 0, 0.25),
+    1px 1px 2px rgba(0, 0, 0, 0.1);
+  transform: rotate(1.8deg);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+.sticky-note:hover {
+  transform: rotate(0deg) translateY(-5px);
+  box-shadow:
+    5px 12px 22px rgba(0, 0, 0, 0.35),
+    2px 3px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* Tape strip visual */
+.tape-strip {
+  background: linear-gradient(135deg, rgba(255, 235, 175, 0.85), rgba(240, 220, 160, 0.7));
+  border: 1px solid rgba(200, 175, 120, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* ================================================================
+   CANDLE & LIGHTING ANIMATIONS
+   ================================================================ */
+
+@keyframes flameFlicker {
+  0%   { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 0.92; }
+  10%  { transform: scaleX(1.05) scaleY(0.96) rotate(1deg); opacity: 1; }
+  20%  { transform: scaleX(0.97) scaleY(1.04) rotate(-0.5deg); opacity: 0.88; }
+  30%  { transform: scaleX(1.02) scaleY(0.98) rotate(1.5deg); opacity: 0.95; }
+  40%  { transform: scaleX(0.98) scaleY(1.06) rotate(-1.8deg); opacity: 0.9; }
+  50%  { transform: scaleX(1.06) scaleY(0.94) rotate(0.8deg); opacity: 1; }
+  60%  { transform: scaleX(0.96) scaleY(1.03) rotate(-0.3deg); opacity: 0.87; }
+  70%  { transform: scaleX(1.04) scaleY(0.97) rotate(1.2deg); opacity: 0.96; }
+  80%  { transform: scaleX(0.99) scaleY(1.05) rotate(-1.5deg); opacity: 0.93; }
+  90%  { transform: scaleX(1.03) scaleY(0.96) rotate(0.5deg); opacity: 0.98; }
+  100% { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 0.92; }
+}
+.candle-flame {
+  animation: flameFlicker 3s infinite ease-in-out;
+  transform-origin: bottom center;
+}
+
+/* Inner blue/white core of flame */
+.flame-core {
+  animation: flameFlicker 2.8s infinite ease-in-out 0.15s;
+  transform-origin: bottom center;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  33% { opacity: 0.55; transform: scale(1.06); }
+  66% { opacity: 0.42; transform: scale(1.03); }
+}
+.candle-glow-bleed {
+  animation: glowPulse 4s infinite ease-in-out;
+}
+
+/* Secondary warm light that bleeds onto the paper edge */
+@keyframes warmLightBleed {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.35; }
+}
+.warm-light-on-paper {
+  animation: warmLightBleed 3.5s infinite ease-in-out;
+}
+
+/* ================================================================
+   DUST PARTICLES — more varied, realistic
+   ================================================================ */
+
+@keyframes dustFloat1 {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.4; }
+  50%  { opacity: 0.5; }
+  85%  { opacity: 0.35; }
+  100% { transform: translate(40px, -140px) rotate(120deg); opacity: 0; }
+}
+@keyframes dustFloat2 {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.3; }
+  50%  { opacity: 0.45; }
+  85%  { opacity: 0.25; }
+  100% { transform: translate(-25px, -100px) rotate(-80deg); opacity: 0; }
+}
+@keyframes dustFloat3 {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  20%  { opacity: 0.35; }
+  80%  { opacity: 0.3; }
+  100% { transform: translate(60px, -80px) rotate(200deg); opacity: 0; }
+}
+
+.dust-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.dust-particle-sm {
+  width: 2px; height: 2px;
+  background: rgba(253, 230, 138, 0.5);
+  animation: dustFloat1 10s infinite linear;
+}
+.dust-particle-md {
+  width: 3px; height: 3px;
+  background: rgba(253, 230, 138, 0.4);
+  animation: dustFloat2 12s infinite linear;
+}
+.dust-particle-lg {
+  width: 4px; height: 4px;
+  background: rgba(253, 230, 138, 0.3);
+  animation: dustFloat3 15s infinite linear;
+  filter: blur(0.5px);
+}
+
+/* ================================================================
+   PAPER IDLE BREATHING — ultra-subtle
+   ================================================================ */
+
+@keyframes paperBreathe {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25%  { transform: translateY(-2px) rotate(0.15deg); }
+  50%  { transform: translateY(-3px) rotate(0.25deg); }
+  75%  { transform: translateY(-1px) rotate(0.1deg); }
+}
+.paper-idle-sway {
+  animation: paperBreathe 8s ease-in-out infinite;
+}
+
+/* ================================================================
+   SECTION HOVER LIFT — newspaper clipping feel
+   ================================================================ */
+
+.newspaper-clipping {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.3s ease,
+              background-color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+.newspaper-clipping::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 1px dashed transparent;
+  transition: border-color 0.3s ease;
+  pointer-events: none;
+}
+.newspaper-clipping:hover {
+  transform: scale(1.01) translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.25), 0 4px 8px -4px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  background-color: rgba(242, 232, 213, 0.4);
+}
+.newspaper-clipping:hover::after {
+  border-color: rgba(100, 70, 30, 0.15);
+}
+
+/* ================================================================
+   NEWSPAPER ORNAMENTS — decorative rules, dividers
+   ================================================================ */
+
+/* Thick-thin double rule (classic newspaper divider) */
+.rule-double {
+  border: none;
+  height: 4px;
+  background: linear-gradient(to bottom,
+    #1a1615 0%, #1a1615 40%,
+    transparent 40%, transparent 60%,
+    #1a1615 60%, #1a1615 100%
+  );
+}
+
+/* Ornamental fleuron divider */
+.ornament-divider {
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 12px;
+  color: #3b342e;
+  line-height: 1;
+}
+
+/* Column vertical rule (between columns) */
+.column-rule {
+  border-right: 1px solid rgba(26, 22, 21, 0.2);
+}
+
+/* Ink bleed effect for headline text */
+.ink-bleed {
+  text-shadow:
+    0 0 0.5px rgba(26, 22, 21, 0.3),
+    0 0 1px rgba(26, 22, 21, 0.1);
+}
+
+/* Drop cap styling */
+.drop-cap::first-letter {
+  float: left;
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: 3.8em;
+  line-height: 0.75;
+  margin-right: 6px;
+  margin-top: 4px;
+  color: #1a1615;
+}
+
+/* ================================================================
+   LOADING ANIMATION — ink blot spread
+   ================================================================ */
+
+@keyframes inkSpread {
+  0%   { transform: scale(0); opacity: 0.8; }
+  50%  { opacity: 0.6; }
+  100% { transform: scale(1); opacity: 0.03; }
+}
+.ink-blot {
+  border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%;
+  background: radial-gradient(ellipse, #1a1615 0%, rgba(26, 22, 21, 0.4) 50%, transparent 70%);
+  animation: inkSpread 2s ease-out infinite;
+}
+
+@keyframes typewriterCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typewriter-cursor {
+  animation: typewriterCursor 0.8s step-end infinite;
+}
+
+/* ================================================================
+   MODAL FADE-IN
+   ================================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ================================================================
+   CUSTOM FONT UTILITIES
+   ================================================================ */
+
+.font-masthead { font-family: 'UnifrakturMaguntia', serif; }
+.font-headline { font-family: 'Playfair Display', serif; }
+.font-body { font-family: 'EB Garamond', 'Old Standard TT', serif; }
+.font-handwriting { font-family: 'Caveat', cursive; }
+.font-typewriter { font-family: 'Special Elite', 'Courier New', monospace; }
+
+/* ================================================================
+   UTILITY CLASSES
+   ================================================================ */
+
+.bg-radial-vignette {
+  background: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.88) 100%);
+}
+
+.text-ink { color: #1a1615; }
+.text-ink-muted { color: #3b342e; }
+.text-ink-sepia { color: #544237; }
+.border-paper-border { border-color: #ba9e74; }
+
+.perspective-1000 { perspective: 1200px; }
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #1c1917; }
+::-webkit-scrollbar-thumb { background: #5c3a18; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7c4a20; }
+
+/* Selection color */
+::selection {
+  background-color: rgba(120, 53, 15, 0.35);
+  color: #1a1615;
+}
