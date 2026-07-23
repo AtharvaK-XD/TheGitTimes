@@ -118,12 +118,22 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [mousePos]);
 
-  // Simple page swap handler
+  const [isPageSwapping, setIsPageSwapping] = useState(false);
+
+  // Smooth vintage newspaper page swap handler
   const handleFlipPage = useCallback(() => {
-    if (profile.hasPageTwo === false) return;
+    if (profile.hasPageTwo === false || isPageSwapping) return;
     audioEngine.playPaperRustle();
-    setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
-  }, [profile.hasPageTwo]);
+    setIsPageSwapping(true);
+
+    setTimeout(() => {
+      setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
+    }, 150);
+
+    setTimeout(() => {
+      setIsPageSwapping(false);
+    }, 400);
+  }, [profile.hasPageTwo, isPageSwapping]);
 
   const handleInspectClipping = useCallback((title: string, category: string, content: React.ReactNode) => {
     setClippingModal({ isOpen: true, title, category, content });
@@ -304,8 +314,8 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               </div>
             )}
 
-            {/* ── STATIONARY CONTENT AREA ── */}
-            <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
+            {/* ── STATIONARY CONTENT AREA WITH VINTAGE PAGE SWAP ANIMATION ── */}
+            <div className={`relative z-[10] flex-1 min-h-0 flex flex-col ${isPageSwapping ? 'animate-newspaper-swap' : ''}`}>
               {isLoading ? (
                 <div className="flex-1 flex flex-col items-center justify-center space-y-6">
                   <div className="relative w-24 h-24 mx-auto">

@@ -584,3 +584,27 @@
   box-shadow: 0 8px 24px rgba(40, 20, 5, 0.16), inset 0 0 10px rgba(180, 140, 60, 0.1);
   border-color: rgba(65, 40, 15, 0.6) !important;
 }
+
+/* Vintage Newspaper Page Transition */
+@keyframes newspaperPageSwap {
+  0% {
+    opacity: 0.2;
+    transform: translateY(8px) scale(0.985);
+    filter: blur(1.5px);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translateY(-2px) scale(1.003);
+    filter: blur(0.4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.animate-newspaper-swap {
+  animation: newspaperPageSwap 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
