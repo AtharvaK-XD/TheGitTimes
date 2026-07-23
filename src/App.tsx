@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DeskScene } from './components/DeskScene';
+import { LandingPage } from './components/LandingPage';
 import { AudioControls } from './components/AudioControls';
 import { MOCK_PROFILES, generateMockProfile, type GitTimesProfile } from './data/mockProfiles';
 import { fetchGitHubUserData } from './services/githubService';
@@ -7,6 +8,7 @@ import { generateNewspaperProfile } from './services/geminiService';
 import { audioEngine } from './services/audioEngine';
 
 export function App() {
+  const [hasSearched, setHasSearched] = useState(false);
   const [activeProfile, setActiveProfile] = useState<GitTimesProfile>({
     ...MOCK_PROFILES.octocat,
     hasPageTwo: true,
@@ -18,6 +20,7 @@ export function App() {
   const handleSearchUsername = async (username: string) => {
     setIsLoading(true);
     setErrorMessage(null);
+    setHasSearched(true);
     audioEngine.playPaperRustle();
 
     try {
@@ -52,7 +55,7 @@ export function App() {
       setHistory((prev) => prev.slice(0, prev.length - 1));
       setActiveProfile(prevProfile);
     } else {
-      setActiveProfile({ ...MOCK_PROFILES.octocat, hasPageTwo: true });
+      setHasSearched(false);
     }
   };
 
@@ -69,13 +72,17 @@ export function App() {
         </div>
       )}
 
-      {/* 3D Desk Scene with Newspaper */}
-      <DeskScene
-        profile={activeProfile}
-        onSearchUsername={handleSearchUsername}
-        onBack={handleBack}
-        isLoading={isLoading}
-      />
+      {/* Conditionally render Landing Page or 3D Desk Scene */}
+      {!hasSearched ? (
+        <LandingPage onSearch={handleSearchUsername} isLoading={isLoading} />
+      ) : (
+        <DeskScene
+          profile={activeProfile}
+          onSearchUsername={handleSearchUsername}
+          onBack={handleBack}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 }
