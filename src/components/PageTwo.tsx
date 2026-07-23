@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { GitTimesProfile } from '../data/mockProfiles';
 import { Sparkles, HelpCircle, CheckCircle } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
+import { PopularRepos } from './PopularRepos';
 
 interface PageTwoProps {
   profile: GitTimesProfile;
@@ -36,11 +37,20 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
       <header className="flex-shrink-0 mb-1">
         <div className="flex items-center justify-between font-typewriter uppercase tracking-[0.12em] text-ink font-bold pb-1"
           style={{ fontSize: '8px', borderBottom: '1.5px solid #1a1615' }}>
-          <span>PAGE 2 · SUNDAY SUNDRY & FEATURES</span>
+          <span>PAGE 2 · SUNDAY SUNDRY, REPOSITORIES & FEATURES</span>
           <span className="hidden sm:inline">THE GIT TIMES GAZETTE</span>
           <span>ISSUE NO. {profile.issueNo}</span>
         </div>
       </header>
+
+      {/* ════════════════════════════════════════════════════
+          POPULAR REPOSITORIES SECTION (REAL DATA)
+          ════════════════════════════════════════════════════ */}
+      {profile.popularRepos && profile.popularRepos.length > 0 && (
+        <section className="newspaper-clipping pb-2 mb-1 flex-shrink-0" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
+          <PopularRepos repos={profile.popularRepos} username={profile.username} />
+        </section>
+      )}
 
       {/* ════════════════════════════════════════════════════
           FEATURE STORY
@@ -58,20 +68,20 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
             </div>
           )
         }
-        className="newspaper-clipping py-2 flex-shrink-0"
+        className="newspaper-clipping py-1.5 flex-shrink-0"
         style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}
       >
         <div className="font-typewriter font-bold text-ink-muted uppercase tracking-[0.15em] mb-0.5" style={{ fontSize: '8px' }}>
           Special Investigative Report
         </div>
-        <h2 className="font-headline ink-bleed font-black uppercase text-ink leading-[1.05]" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.7rem)' }}>
+        <h2 className="font-headline ink-bleed font-black uppercase text-ink leading-[1.05]" style={{ fontSize: 'clamp(1.0rem, 2.2vw, 1.5rem)' }}>
           {profile.featureStory.title}
         </h2>
-        <div className="font-headline italic text-ink-sepia mb-2" style={{ fontSize: 'clamp(0.65rem, 1.1vw, 0.8rem)' }}>
+        <div className="font-headline italic text-ink-sepia mb-1" style={{ fontSize: 'clamp(0.6rem, 1.0vw, 0.75rem)' }}>
           {profile.featureStory.author}
         </div>
 
-        <div className="columns-1 sm:columns-2 gap-5 font-body text-[12px] leading-[1.6] text-justify text-ink" style={{ columnRule: '1px solid rgba(26,22,21,0.12)' }}>
+        <div className="columns-1 sm:columns-2 gap-4 font-body text-[11.5px] leading-[1.55] text-justify text-ink" style={{ columnRule: '1px solid rgba(26,22,21,0.12)' }}>
           {profile.featureStory.content.map((para, idx) => (
             <p key={idx} className={idx === 0 ? 'drop-cap mb-2' : 'mb-2'}>{para}</p>
           ))}
@@ -84,7 +94,7 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
       {/* ════════════════════════════════════════════════════
           CROSSWORD + HOROSCOPE
           ════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-0 py-2 flex-shrink-0" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-0 py-1.5 flex-shrink-0" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
         {/* Interactive Git Crossword */}
         <div className="md:col-span-7 newspaper-clipping p-2.5 md:pr-4 md:border-r md:border-ink/15 pb-3 md:pb-0"
           style={{ background: 'rgba(230,215,188,0.2)', border: '0.5px solid rgba(26,22,21,0.15)' }}>
@@ -108,7 +118,7 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
               <p><strong>2.</strong> Pointer to current branch commit tip (4 Letters)</p>
             </div>
 
-            {/* Inputs — Aged paper boxes instead of white inputs */}
+            {/* Inputs — Aged paper boxes */}
             <div className="flex flex-col gap-2 justify-center items-center font-typewriter">
               <div className="flex items-center gap-1">
                 <span className="text-[9px] font-bold text-ink-muted mr-1">1.</span>
@@ -182,49 +192,6 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
           </div>
         </div>
       </div>
-
-      {/* ════════════════════════════════════════════════════
-          RETRO COMIC STRIP — SUNDAY FUNNIES
-          ════════════════════════════════════════════════════ */}
-      <section
-        onClick={() =>
-          onInspectClipping(
-            'Sunday Comic Strip: Rebase vs Merge',
-            'Sunday Funnies',
-            <div className="text-center font-typewriter">
-              <p className="text-base mb-2">"Developer A attempts a clean fast-forward rebase."</p>
-              <p className="text-sm italic text-stone-700">"Developer B merges with --no-ff creating a glorious octopus graph!"</p>
-            </div>
-          )
-        }
-        className="newspaper-clipping py-2.5 px-2 flex-1 min-h-0 mt-1 flex flex-col justify-between"
-        style={{ borderTop: '1.5px solid #1a1615', borderBottom: '1.5px solid #1a1615', background: 'rgba(230,215,188,0.15)' }}
-      >
-        <h4 className="font-typewriter text-[9px] font-bold uppercase tracking-[0.2em] text-ink text-center mb-1.5 pb-0.5"
-          style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
-          ★ SUNDAY FUNNIES: THE REBASE PARADOX ★
-        </h4>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-typewriter text-[10px]">
-          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
-            <span className="font-bold text-ink uppercase text-[9px]">Panel 1: "Clean History"</span>
-            <p className="text-ink-muted italic my-1 leading-tight" style={{ fontSize: '9.5px' }}>"I'll rebase interactively to keep linear commits!"</p>
-            <span className="text-[8px] text-ink-muted">Pick commit a1b2c3</span>
-          </div>
-
-          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
-            <span className="font-bold text-ink uppercase text-[9px]">Panel 2: "CONFLICT!"</span>
-            <p className="text-ink font-extrabold my-1 leading-tight" style={{ fontSize: '9.5px' }}>"CONFLICT (content): Merge conflict in main.rs"</p>
-            <span className="text-[8px] text-ink-muted">{'<<<<<<< HEAD'}</span>
-          </div>
-
-          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
-            <span className="font-bold text-ink uppercase text-[9px]">Panel 3: "git push --force"</span>
-            <p className="text-ink-muted italic my-1 leading-tight" style={{ fontSize: '9.5px' }}>"Problem solved! Production will never know."</p>
-            <span className="text-[8px] text-ink-muted">Everything up-to-date</span>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

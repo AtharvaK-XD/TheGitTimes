@@ -1,7 +1,8 @@
 import React from 'react';
 import type { GitTimesProfile } from '../data/mockProfiles';
-import { TrendingUp, Sun, Flame, Award, Hash, Star, Users } from 'lucide-react';
+import { Sun, Award, Hash, Star, Users, ExternalLink, UserCheck } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
+import { ContributionsGrid } from './ContributionsGrid';
 
 interface FrontPageProps {
   profile: GitTimesProfile;
@@ -14,7 +15,11 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
     onInspectClipping(title, category, content);
   };
 
-  const maxCommits = Math.max(...profile.contributionChart.map(p => p.commits));
+  const profileUrl = profile.profileUrl || `https://github.com/${profile.username}`;
+  const followersUrl = profile.followersUrl || `${profileUrl}?tab=followers`;
+  const followingUrl = profile.followingUrl || `${profileUrl}?tab=following`;
+  const reposUrl = profile.reposUrl || `${profileUrl}?tab=repositories`;
+  const prsUrl = `https://github.com/pulls?q=is%3Apr+author%3A${profile.username}`;
 
   return (
     <div className="w-full select-text text-ink flex flex-col" style={{ fontSize: '13px' }}>
@@ -73,11 +78,22 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
         <h2 className="font-headline ink-bleed uppercase leading-[1.05] text-ink font-black" style={{ fontSize: 'clamp(1.1rem, 2.8vw, 1.8rem)', letterSpacing: '-0.01em' }}>
           {profile.headline}
         </h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <h3 className="font-headline italic font-semibold text-ink-muted" style={{ fontSize: 'clamp(0.6rem, 1.2vw, 0.78rem)' }}>
             {profile.subHeadline}
           </h3>
-          <span className="font-typewriter text-ink-muted tracking-wider uppercase flex-shrink-0" style={{ fontSize: '7px' }}>— By Our Special Correspondent</span>
+          <a
+            href={profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => { e.stopPropagation(); audioEngine.playPaperRustle(); }}
+            className="font-typewriter text-ink hover:text-amber-900 font-bold uppercase tracking-wider flex items-center gap-1 hover:underline"
+            style={{ fontSize: '8px' }}
+            title={`View @${profile.username} on GitHub`}
+          >
+            <span>@{profile.username}</span>
+            <ExternalLink className="w-2.5 h-2.5" />
+          </a>
         </div>
       </section>
 
@@ -98,6 +114,9 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
               <div className="text-center">
                 <div className="relative inline-block"><img src={profile.avatarUrl} alt={profile.fullName} className="w-52 h-52 halftone-sepia border border-stone-400 shadow-md" /><div className="halftone-dots-overlay" /></div>
                 <p className="font-handwriting text-2xl text-ink-sepia mt-3">{profile.caption}</p>
+                <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 px-3 py-1 bg-amber-950 text-amber-100 font-typewriter text-xs uppercase font-bold rounded">
+                  Open Official GitHub Profile ↗
+                </a>
               </div>
             )}
             className="newspaper-clipping flex-shrink-0"
@@ -132,91 +151,112 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
         {/* Column Rule 1 */}
         <div className="hidden lg:block" style={{ background: 'rgba(26,22,21,0.15)' }} />
 
-        {/* ━━━━━━━━ COLUMN 2: Stats + Markets + Weather ━━━━━━━━ */}
+        {/* ━━━━━━━━ COLUMN 2: Stats + Contributions Grid + Markets ━━━━━━━━ */}
         <div className="flex flex-col gap-1.5 px-2 min-h-0">
-          {/* Stats Manifesto (compact 3×2) */}
-          <section
-            onClick={() => handleClickClipping('Developer Statistics Manifesto', 'Gazette Record',
-              <div className="grid grid-cols-2 gap-3 font-typewriter">
-                {[
-                  { label: 'Repositories', value: profile.statsManifest.totalRepos },
-                  { label: 'Stars', value: profile.statsManifest.totalStars.toLocaleString() },
-                  { label: 'Followers', value: profile.statsManifest.totalFollowers.toLocaleString() },
-                  { label: 'Streak', value: `${profile.statsManifest.currentStreak} Days` },
-                  { label: 'Commits/Year', value: profile.statsManifest.totalCommitsYear.toLocaleString() },
-                  { label: 'PRs Merged', value: profile.statsManifest.pullRequestsMerged.toLocaleString() },
-                ].map((s, i) => (
-                  <div key={i} className="p-3 border border-ink/30" style={{ background: 'rgba(230,215,188,0.3)' }}>
-                    <span className="text-[10px] text-ink-muted block uppercase">{s.label}</span>
-                    <span className="text-xl font-bold text-ink">{s.value}</span>
-                  </div>
-                ))}
+          {/* Real Stats Manifesto with Direct GitHub Links */}
+          <section className="newspaper-clipping flex-shrink-0" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.15)' }}>
+            <div className="flex items-center justify-between mb-1 pb-0.5" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
+              <div className="flex items-center gap-1">
+                <Award className="w-3 h-3 text-ink-muted flex-shrink-0" />
+                <h4 className="font-typewriter font-bold uppercase tracking-[0.1em] text-ink" style={{ fontSize: '8px' }}>
+                  Gazette Bulletin · Real GitHub Telemetry
+                </h4>
               </div>
-            )}
-            className="newspaper-clipping flex-shrink-0"
-            style={{ borderBottom: '0.5px solid rgba(26,22,21,0.15)' }}
-          >
-            <div className="flex items-center gap-1 mb-1" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
-              <Award className="w-3 h-3 text-ink-muted flex-shrink-0" />
-              <h4 className="font-typewriter font-bold uppercase tracking-[0.1em] text-ink" style={{ fontSize: '8px' }}>Gazette Bulletin · Key Statistics</h4>
+              <a
+                href={profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="font-typewriter text-[7.5px] uppercase font-bold text-ink-muted hover:text-ink hover:underline flex items-center gap-0.5"
+              >
+                <span>Profile</span>
+                <ExternalLink className="w-2 h-2" />
+              </a>
             </div>
+
             <div className="grid grid-cols-3 gap-0 font-typewriter" style={{ fontSize: '9px' }}>
-              {[
-                { icon: <Hash className="w-2.5 h-2.5" />, label: 'Repos', value: profile.statsManifest.totalRepos },
-                { icon: <Star className="w-2.5 h-2.5" />, label: 'Stars', value: profile.statsManifest.totalStars.toLocaleString() },
-                { icon: <Users className="w-2.5 h-2.5" />, label: 'Followers', value: profile.statsManifest.totalFollowers.toLocaleString() },
-                { icon: <Flame className="w-2.5 h-2.5" />, label: 'Streak', value: `${profile.statsManifest.currentStreak}d` },
-                { icon: <TrendingUp className="w-2.5 h-2.5" />, label: 'Commits', value: profile.statsManifest.totalCommitsYear.toLocaleString() },
-                { icon: <Award className="w-2.5 h-2.5" />, label: 'PRs', value: profile.statsManifest.pullRequestsMerged.toLocaleString() },
-              ].map((s, idx) => (
-                <div key={idx} className="text-center py-1"
-                  style={{ borderRight: idx % 3 !== 2 ? '0.5px solid rgba(26,22,21,0.1)' : 'none', borderBottom: idx < 3 ? '0.5px solid rgba(26,22,21,0.1)' : 'none' }}>
-                  <div className="flex justify-center text-ink-muted mb-0.5">{s.icon}</div>
-                  <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>{s.label}</div>
-                  <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '14px' }}>{s.value}</div>
-                </div>
-              ))}
+              {/* Repos Link */}
+              <a
+                href={reposUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="text-center py-1 hover:bg-amber-100/30 transition-colors cursor-pointer"
+                style={{ borderRight: '0.5px solid rgba(26,22,21,0.1)', borderBottom: '0.5px solid rgba(26,22,21,0.1)' }}
+                title="View All Repositories on GitHub"
+              >
+                <div className="flex justify-center text-ink-muted mb-0.5"><Hash className="w-2.5 h-2.5" /></div>
+                <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>Repos ↗</div>
+                <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '13px' }}>{profile.statsManifest.totalRepos}</div>
+              </a>
+
+              {/* Stars Link */}
+              <a
+                href={reposUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="text-center py-1 hover:bg-amber-100/30 transition-colors cursor-pointer"
+                style={{ borderRight: '0.5px solid rgba(26,22,21,0.1)', borderBottom: '0.5px solid rgba(26,22,21,0.1)' }}
+                title="View Starred Repositories"
+              >
+                <div className="flex justify-center text-ink-muted mb-0.5"><Star className="w-2.5 h-2.5 text-amber-800" /></div>
+                <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>Stars ↗</div>
+                <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '13px' }}>{profile.statsManifest.totalStars.toLocaleString()}</div>
+              </a>
+
+              {/* Followers Link */}
+              <a
+                href={followersUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="text-center py-1 hover:bg-amber-100/30 transition-colors cursor-pointer"
+                style={{ borderRight: '0.5px solid rgba(26,22,21,0.1)', borderBottom: '0.5px solid rgba(26,22,21,0.1)' }}
+                title="View Followers on GitHub"
+              >
+                <div className="flex justify-center text-ink-muted mb-0.5"><Users className="w-2.5 h-2.5" /></div>
+                <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>Followers ↗</div>
+                <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '13px' }}>{profile.statsManifest.totalFollowers.toLocaleString()}</div>
+              </a>
+
+              {/* Following Link */}
+              <a
+                href={followingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="text-center py-1 hover:bg-amber-100/30 transition-colors cursor-pointer"
+                style={{ borderRight: '0.5px solid rgba(26,22,21,0.1)' }}
+                title="View Following on GitHub"
+              >
+                <div className="flex justify-center text-ink-muted mb-0.5"><Users className="w-2.5 h-2.5 text-amber-900" /></div>
+                <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>Following ↗</div>
+                <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '13px' }}>{profile.statsManifest.totalFollowing ?? 0}</div>
+              </a>
+
+              {/* PRs Link */}
+              <a
+                href={prsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => audioEngine.playPaperRustle()}
+                className="text-center py-1 hover:bg-amber-100/30 transition-colors cursor-pointer"
+                title="View Pull Requests on GitHub"
+              >
+                <div className="flex justify-center text-ink-muted mb-0.5"><UserCheck className="w-2.5 h-2.5" /></div>
+                <div className="uppercase text-ink-muted tracking-wider font-bold" style={{ fontSize: '7px' }}>PRs ↗</div>
+                <div className="font-extrabold text-ink ink-bleed leading-none mt-0.5" style={{ fontSize: '13px' }}>{profile.statsManifest.pullRequestsMerged.toLocaleString()}</div>
+              </a>
             </div>
           </section>
 
-          {/* Markets — Commit Index Chart */}
-          <div
-            onClick={() => handleClickClipping('Market Index: Weekly Commits', 'Financial Exchange',
-              <div>
-                <p className="mb-4 font-body">Strong bullish momentum across feature branches with zero merge halts.</p>
-                <div className="p-3 border border-ink/30 font-typewriter text-xs" style={{ background: 'rgba(230,215,188,0.3)' }}>
-                  {profile.contributionChart.map((pt) => (
-                    <div key={pt.day} className="flex justify-between py-1" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.15)' }}>
-                      <span>{pt.day}</span><span className="font-bold">{pt.commits} Commits</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            className="newspaper-clipping flex-shrink-0"
-            style={{ borderBottom: '0.5px solid rgba(26,22,21,0.15)' }}
-          >
-            <div className="flex items-center justify-between mb-1" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
-              <h4 className="font-typewriter font-bold uppercase tracking-[0.1em] text-ink flex items-center gap-1" style={{ fontSize: '8px' }}>
-                <TrendingUp className="w-3 h-3 text-ink-muted" /> Markets · Commit Index
-              </h4>
-              <span className="font-typewriter text-ink font-bold" style={{ fontSize: '8px' }}>▲ 18.4%</span>
+          {/* ══════ REAL GITHUB CONTRIBUTIONS HEAT MAP GRID ══════ */}
+          {profile.contributionsGrid && profile.contributionsGrid.length > 0 && (
+            <div className="newspaper-clipping flex-shrink-0">
+              <ContributionsGrid contributions={profile.contributionsGrid} username={profile.username} />
             </div>
-            <div className="relative w-full" style={{ height: '70px', background: 'rgba(230,215,188,0.2)', border: '0.5px solid rgba(26,22,21,0.12)' }}>
-              <svg className="w-full h-full overflow-visible p-1" viewBox="0 0 100 35" preserveAspectRatio="none">
-                <polygon fill="rgba(26,22,21,0.04)"
-                  points={`0,35 ${profile.contributionChart.map((pt, i) => `${(i / 6) * 100},${35 - (pt.commits / maxCommits) * 30}`).join(' ')} 100,35`} />
-                <polyline fill="none" stroke="#1a1615" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  points={profile.contributionChart.map((pt, i) => `${(i / 6) * 100},${35 - (pt.commits / maxCommits) * 30}`).join(' ')} />
-                {profile.contributionChart.map((pt, i) => (
-                  <circle key={i} cx={(i / 6) * 100} cy={35 - (pt.commits / maxCommits) * 30} r="1.5" fill="#1a1615" stroke="#ede4d0" strokeWidth="0.6" />
-                ))}
-              </svg>
-            </div>
-            <div className="flex justify-between font-typewriter text-ink-muted font-bold mt-0.5" style={{ fontSize: '7px' }}>
-              {profile.contributionChart.map(pt => <span key={pt.day}>{pt.day}</span>)}
-            </div>
-          </div>
+          )}
 
           {/* Weather Box */}
           <div

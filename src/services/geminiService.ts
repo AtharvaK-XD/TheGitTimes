@@ -1,24 +1,56 @@
-import type { GitTimesProfile, LanguageStat, ContributionPoint } from '../data/mockProfiles';
+import type { GitTimesProfile, LanguageStat, ContributionPoint, PopularRepo } from '../data/mockProfiles';
 import type { RawGitHubData } from './githubService';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 export async function generateNewspaperProfile(githubData: RawGitHubData): Promise<GitTimesProfile> {
-  const { user, repos, events } = githubData;
+  const { user, repos, events, totalPullRequests, contributions } = githubData;
   const username = user.login;
   const fullName = user.name || user.login;
   const avatarUrl = user.avatar_url;
   const location = user.location || 'GLOBAL NETWORK';
+  const profileUrl = user.html_url || `https://github.com/${username}`;
+  const followersUrl = `${profileUrl}?tab=followers`;
+  const followingUrl = `${profileUrl}?tab=following`;
+  const reposUrl = `${profileUrl}?tab=repositories`;
 
-  // 1. Calculate quantitative stats from GitHub API
+  // 1. Calculate quantitative stats directly from GitHub API
   const totalRepos = user.public_repos;
   const totalStars = repos.reduce((acc, r) => acc + (r.stargazers_count || 0), 0);
   const totalFollowers = user.followers;
+  const totalFollowing = user.following;
   
   // DYNAMIC PAGE COUNT:
-  // If the GitHub profile is big enough (>= 8 repos, or >= 10 stars, or >= 10 followers), then Page 2 exists!
-  // Otherwise, 1 page is enough.
-  const hasPageTwo = totalRepos >= 8 || totalStars >= 10 || totalFollowers >= 10;
+  // If the GitHub profile has repos or followers, Page 2 exists!
+  const hasPageTwo = totalRepos >= 6 || totalStars >= 8 || totalFollowers >= 8;
+
+  // Extract Top Popular Repositories sorted by stargazers_count
+  const popularRepos: PopularRepo[] = repos
+    .slice()
+    .sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
+    .slice(0, 6)
+    .map(r => ({
+      name: r.name,
+      description: r.description || 'Public GitHub repository dispatch.',
+      stars: r.stargazers_count || 0,
+      forks: r.forks_count || 0,
+      language: r.language || 'Code',
+      htmlUrl: r.html_url,
+      homepage: r.homepage && r.homepage.trim() !== '' ? r.homepage : null,
+    }));
+
+  // Compute total commits in past year directly from contributions grid
+  const totalCommitsYear = contributions.reduce((acc, c) => acc + c.count, 0) || (repos.length * 12 + events.length * 5 + 42);
+
+  // Calculate current streak from contributions grid
+  let currentStreak = 0;
+  for (let i = contributions.length - 1; i >= 0; i--) {
+    if (contributions[i].count > 0) {
+      currentStreak++;
+    } else if (currentStreak > 0) {
+      break;
+    }
+  }
 
   // Compute Language breakdown from public repos
   const langCounts: Record<string, { count: number; stars: number }> = {};
@@ -56,10 +88,9 @@ export async function generateNewspaperProfile(githubData: RawGitHubData): Promi
     languages.push({ rank: 2, name: 'HTML/CSS', share: 40, reposCount: 1, starsCount: 0, status: 'RISING' });
   }
 
-  // Compute weekly commit chart points (Mon..Sun) from events
+  // Legacy chart points for back-compat
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const dayCounts: Record<string, number> = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0 };
-
   events.forEach((evt) => {
     if (evt.created_at) {
       const d = new Date(evt.created_at);
@@ -67,16 +98,11 @@ export async function generateNewspaperProfile(githubData: RawGitHubData): Promi
       dayCounts[dayName] = (dayCounts[dayName] || 0) + 1;
     }
   });
-
   const maxEvent = Math.max(...Object.values(dayCounts));
   const contributionChart: ContributionPoint[] = dayNames.map((day) => ({
     day,
-    commits: maxEvent > 0 ? (dayCounts[day] || 1) * 8 + Math.floor(Math.random() * 5) : Math.floor(12 + Math.random() * 15),
+    commits: maxEvent > 0 ? (dayCounts[day] || 1) * 8 : 12,
   }));
-
-  const totalCommitsYear = repos.length * 16 + events.length * 8 + 48;
-  const currentStreak = Math.min(events.length + 4, 45);
-  const pullRequestsMerged = Math.floor(repos.length * 2.2 + events.length * 0.9);
 
   // 2. Query Gemini API for witty 1920s newspaper copy
   let aiCopy: any = null;
@@ -146,7 +172,7 @@ Return ONLY a valid JSON object matching this exact structure (no markdown forma
   const subHeadline = aiCopy?.subHeadline || `Eyewitnesses Report Unprecedented Terminal Velocity & Coffee Consumption in Local Borough`;
   const bioArticle = [
     aiCopy?.bioParagraph1 || `In an astounding exhibition of nocturnal endurance, local computer engineer @${username} completed their latest software repository. Neighbors reported the rhythmic clatter of mechanical switches echoing through the dimly lit courtyard until 4:00 AM.`,
-    aiCopy?.bioParagraph2 || `Sources close to the developer confirm that over ${totalStars * 15 + totalRepos * 8 + 120} git commits were dispatched to remote branches in recent fortnight. Despite mysterious merge conflicts arising in the main trunk, the developer maintained unwavering composure, deploying hotfixes directly into production.`
+    aiCopy?.bioParagraph2 || `Sources close to the developer confirm that over ${totalCommitsYear} git commits were dispatched to remote branches. Despite mysterious merge conflicts arising in the main trunk, the developer maintained unwavering composure, deploying hotfixes directly into production.`
   ];
   const caption = aiCopy?.photoCaption || `Fig. 1 — @${username} captured in deep contemplation at 3:14 AM.`;
   const weatherSummary = aiCopy?.weatherForecast || 'SCORCHING HEATWAVE OF COMMITS IN LATE EVENING';
@@ -203,12 +229,16 @@ Return ONLY a valid JSON object matching this exact structure (no markdown forma
     username,
     fullName,
     avatarUrl,
+    profileUrl,
+    followersUrl,
+    followingUrl,
+    reposUrl,
     joinedDate: formattedDate,
     location,
-    hasPageTwo, // Dynamic page existence based on profile size!
+    hasPageTwo,
     volumeNo,
     issueNo,
-    dateStr: 'THURSDAY, JULY 23, 2026',
+    dateStr: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase(),
     headline,
     subHeadline,
     bioArticle,
@@ -217,11 +247,14 @@ Return ONLY a valid JSON object matching this exact structure (no markdown forma
       totalRepos,
       totalStars,
       totalFollowers,
+      totalFollowing,
       currentStreak,
       totalCommitsYear,
-      pullRequestsMerged,
+      pullRequestsMerged: totalPullRequests,
     },
     contributionChart,
+    contributionsGrid: contributions,
+    popularRepos,
     languages,
     weatherActivity: {
       forecastSummary: weatherSummary,

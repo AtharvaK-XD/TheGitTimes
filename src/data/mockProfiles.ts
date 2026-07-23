@@ -12,10 +12,30 @@ export interface ContributionPoint {
   commits: number;
 }
 
+export interface PopularRepo {
+  name: string;
+  description: string;
+  stars: number;
+  forks: number;
+  language: string;
+  htmlUrl: string;
+  homepage: string | null;
+}
+
+export interface ContributionDay {
+  date: string;
+  count: number;
+  level: 0 | 1 | 2 | 3 | 4;
+}
+
 export interface GitTimesProfile {
   username: string;
   fullName: string;
   avatarUrl: string;
+  profileUrl?: string;
+  followersUrl?: string;
+  followingUrl?: string;
+  reposUrl?: string;
   joinedDate: string;
   location: string;
   hasPageTwo?: boolean;
@@ -30,11 +50,14 @@ export interface GitTimesProfile {
     totalRepos: number;
     totalStars: number;
     totalFollowers: number;
+    totalFollowing?: number;
     currentStreak: number;
     totalCommitsYear: number;
     pullRequestsMerged: number;
   };
   contributionChart: ContributionPoint[];
+  contributionsGrid?: ContributionDay[];
+  popularRepos?: PopularRepo[];
   languages: LanguageStat[];
   weatherActivity: {
     forecastSummary: string;
