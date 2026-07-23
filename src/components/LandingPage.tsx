@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Terminal, ArrowRight, Flame } from 'lucide-react';
+import { Sparkles, ArrowRight, Flame, Compass } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
 
 interface LandingPageProps {
@@ -47,11 +47,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
           backgroundImage: `url('/assets/newspaper_bg.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.62) contrast(1.2) saturate(0.8)',
+          filter: 'brightness(0.65) contrast(1.2) saturate(0.85)',
         }}
       />
       <div className="fixed inset-0 bg-radial-vignette pointer-events-none z-[1]" />
-      <div className="fixed inset-0 bg-amber-950/15 pointer-events-none z-[1] mix-blend-multiply" />
+      <div className="fixed inset-0 bg-amber-950/10 pointer-events-none z-[1] mix-blend-multiply" />
 
       {/* Warm Ambient Candle Light Glow */}
       <div
@@ -62,7 +62,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
           transform: 'translate(-50%, -50%)',
           width: '700px',
           height: '700px',
-          background: 'radial-gradient(circle, rgba(255, 170, 50, 0.16) 0%, rgba(255, 140, 30, 0.05) 50%, transparent 75%)',
+          background: 'radial-gradient(circle, rgba(255, 170, 50, 0.18) 0%, rgba(255, 140, 30, 0.05) 50%, transparent 75%)',
         }}
       />
 
@@ -70,117 +70,136 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
       <div className="relative z-10 w-full max-w-2xl mx-auto">
         
         {/* Ancient Newspaper Banner Header */}
-        <div className="text-center mb-6 animate-fadeIn">
-          <div className="flex items-center justify-center gap-2 font-typewriter text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-amber-200/80 mb-2">
-            <span>★ OFFICIAL TELEGRAPH & TYPESETTING BUREAU ★</span>
+        <div className="text-center mb-5 animate-fadeIn">
+          <div className="flex items-center justify-center gap-2 font-typewriter text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-amber-200/80 mb-1.5">
+            <span>✦ POSTAL TELEGRAPH & TYPESETTING BUREAU ✦</span>
           </div>
 
-          <h1 className="font-masthead ink-bleed text-4xl sm:text-6xl md:text-7xl uppercase text-amber-100 tracking-wider mb-2 drop-shadow-2xl"
+          <h1 className="font-masthead ink-bleed text-4xl sm:text-6xl md:text-7xl uppercase text-amber-100 tracking-wider mb-1 drop-shadow-2xl"
             style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(180,120,40,0.3)' }}>
             The Git Times
           </h1>
 
-          <p className="font-headline italic text-amber-200/90 text-sm sm:text-base tracking-widest">
+          <p className="font-headline italic text-amber-200/90 text-xs sm:text-sm tracking-widest">
             "All the Commits Fit to Print"
           </p>
 
-          <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-amber-600/60 to-transparent mx-auto my-3" />
+          <div className="w-36 h-0.5 bg-gradient-to-r from-transparent via-amber-600/60 to-transparent mx-auto my-2.5" />
         </div>
 
-        {/* ═══════ TYPEWRITER DESK FRAME ═══════ */}
-        <div className="paper-texture deckled-paper coffee-stain p-6 sm:p-8 rounded-lg shadow-2xl relative border-2 border-amber-900/60 overflow-hidden"
+        {/* ═══════ VINTAGE TELEGRAM BLANK / DESK FRAME ═══════ */}
+        <div className="paper-texture deckled-paper coffee-stain p-6 sm:p-8 rounded-sm shadow-2xl relative border-2 border-[#1a1615] overflow-hidden"
           style={{
-            boxShadow: '0 20px 60px rgba(0,0,0,0.85), inset 0 0 40px rgba(0,0,0,0.06)',
+            boxShadow: '0 25px 70px rgba(0,0,0,0.88), inset 0 0 40px rgba(0,0,0,0.08)',
             backgroundColor: '#d8c49d',
           }}
         >
-          {/* Aged Overlays */}
+          {/* Aged Overlays & Fold Creases */}
           <div className="paper-aged-overlay" />
           <div className="paper-creases" />
 
+          {/* Corner Rivet Details */}
+          <div className="absolute top-2 left-2 w-2.5 h-2.5 rounded-full border border-amber-900/60 bg-amber-800/40 shadow-inner z-20 pointer-events-none" />
+          <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full border border-amber-900/60 bg-amber-800/40 shadow-inner z-20 pointer-events-none" />
+          <div className="absolute bottom-2 left-2 w-2.5 h-2.5 rounded-full border border-amber-900/60 bg-amber-800/40 shadow-inner z-20 pointer-events-none" />
+          <div className="absolute bottom-2 right-2 w-2.5 h-2.5 rounded-full border border-amber-900/60 bg-amber-800/40 shadow-inner z-20 pointer-events-none" />
+
           <div className="relative z-10">
             
-            {/* Header Badge */}
-            <div className="flex items-center justify-between border-b-2 border-ink pb-3 mb-5">
-              <div className="flex items-center gap-2 font-typewriter text-xs font-extrabold uppercase tracking-wider text-ink">
-                <Terminal className="w-4 h-4 text-amber-950" />
-                <span>Underwood Dispatch Station No. 9</span>
+            {/* Vintage Telegram Header Strip */}
+            <div className="border-b-2 border-[#1a1615] pb-2 mb-4">
+              <div className="flex items-center justify-between font-typewriter text-[9px] sm:text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#1a1615]">
+                <div className="flex items-center gap-1.5">
+                  <Compass className="w-3.5 h-3.5 text-[#3b2b18]" />
+                  <span>TELEGRAPH DISPATCH BLANK · FORM NO. 1928-C</span>
+                </div>
+                <span>EST. MMVIII</span>
               </div>
-              <span className="font-typewriter text-[9px] uppercase tracking-widest text-ink-muted font-bold hidden sm:inline">
-                EST. MMVIII
-              </span>
+              <div className="flex justify-between font-typewriter text-[8px] uppercase tracking-wider text-ink-muted mt-1 pt-1"
+                style={{ borderTop: '0.5px solid rgba(26,22,21,0.2)' }}>
+                <span>DESTINATION: FRONT PAGE</span>
+                <span>SERVICE: LIVE GITHUB FEED</span>
+                <span>STATUS: READY</span>
+              </div>
             </div>
 
-            <p className="font-body text-sm sm:text-base text-ink leading-relaxed text-justify mb-5 font-medium">
+            <p className="font-body text-xs sm:text-sm text-[#1a1615] leading-relaxed text-justify mb-4 font-medium">
               Enter any GitHub username below to order an authentic 1920s broadside edition. Our telegraph desk will live-fetch stats, repositories, and contribution records to compose a custom front page.
             </p>
 
-            {/* Search Input Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Typesetting Input Form */}
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               <div className="relative">
+                <div className="font-typewriter text-[9px] uppercase tracking-widest text-[#1a1615] font-extrabold mb-1 flex justify-between">
+                  <span>[ TYPESET GITHUB USERNAME ]</span>
+                  <span className="text-ink-muted">PRESS ENTER TO PRINT</span>
+                </div>
+                
                 <input
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type GitHub username (e.g. torvalds, octocat)..."
+                  placeholder="e.g. torvalds, octocat, gaearon..."
                   disabled={isLoading}
                   autoFocus
-                  className="w-full bg-amber-50/70 text-ink placeholder-ink-muted/60 border-2 border-ink rounded-md px-4 py-3 font-typewriter text-sm sm:text-base tracking-wider focus:outline-none focus:bg-amber-100 focus:border-amber-950 transition-all shadow-inner disabled:opacity-50"
+                  className="w-full text-ink placeholder-ink-muted/50 border-2 border-[#1a1615] rounded-none px-3.5 py-2.5 font-typewriter text-sm sm:text-base tracking-wider focus:outline-none focus:bg-[#eedaa9] transition-all disabled:opacity-50"
                   style={{
-                    backgroundColor: 'rgba(245, 235, 215, 0.8)',
-                    boxShadow: 'inset 0 2px 5px rgba(0,0,0,0.15)',
+                    backgroundColor: 'rgba(220, 200, 160, 0.45)',
+                    boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.15)',
                   }}
                 />
-                <Search className="absolute right-4 top-3.5 w-5 h-5 text-ink-muted pointer-events-none" />
               </div>
 
-              {/* Submit CTA Button */}
+              {/* Submit CTA Button — Heavy Brass Press Plate */}
               <button
                 type="submit"
                 disabled={isLoading || !inputValue.trim()}
-                className="w-full py-3.5 px-6 font-typewriter text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] rounded-md transition-all transform active:scale-[0.98] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-xl"
+                className="w-full py-3 px-6 font-typewriter text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] rounded-none transition-all transform active:scale-[0.98] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
                 style={{
-                  background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
-                  color: '#d4a84a',
-                  border: '1.5px solid #5c3a18',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,200,100,0.15)',
+                  background: 'linear-gradient(to bottom, #3b2410, #1f1207)',
+                  color: '#e5b95c',
+                  border: '2px solid #8b6914',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,200,100,0.2)',
+                  textShadow: '0 1px 2px #000',
                 }}
               >
                 {isLoading ? (
                   <>
                     <Flame className="w-4 h-4 text-amber-500 animate-pulse" />
-                    <span>Typesetting Front Page...</span>
+                    <span>TYPESETTING FRONT PAGE...</span>
                   </>
                 ) : (
                   <>
                     <span>PRINT DISPATCH EDITION</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 text-amber-400" />
                   </>
                 )}
               </button>
             </form>
 
-            {/* Famous Editions Presets */}
-            <div className="mt-6 pt-4 border-t border-ink/30 font-typewriter">
-              <div className="flex items-center gap-1 text-xs text-ink-muted font-bold uppercase tracking-wider mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-amber-900" />
-                <span>Popular Developer Editions:</span>
+            {/* Popular Developer Editions — Vintage Telegram Stamps */}
+            <div className="mt-4 pt-3 font-typewriter" style={{ borderTop: '0.5px solid rgba(26,22,21,0.25)' }}>
+              <div className="flex items-center gap-1 text-[10px] text-[#1a1615] font-bold uppercase tracking-wider mb-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-950" />
+                <span>ARCHIVED POPULAR EDITIONS:</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {famousPresets.map((preset) => (
+                {famousPresets.map((preset, idx) => (
                   <button
                     key={preset.username}
                     onClick={() => handlePresetClick(preset.username)}
                     disabled={isLoading}
-                    className="px-2.5 py-1 text-[11px] font-bold text-ink hover:text-amber-950 rounded transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1"
+                    className="px-2.5 py-1 text-[10.5px] font-bold text-[#1a1615] hover:text-amber-950 transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1"
                     style={{
-                      backgroundColor: 'rgba(220, 200, 160, 0.4)',
-                      border: '0.5px solid rgba(26,22,21,0.3)',
+                      backgroundColor: 'rgba(210, 190, 150, 0.55)',
+                      border: '1px solid #1a1615',
+                      transform: `rotate(${idx % 2 === 0 ? '-0.8deg' : '0.8deg'})`,
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
                     }}
                   >
                     <span>@{preset.username}</span>
-                    <span className="text-[9px] text-ink-sepia">({preset.label})</span>
+                    <span className="text-[8.5px] text-ink-sepia">({preset.label})</span>
                   </button>
                 ))}
               </div>
@@ -190,7 +209,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
         </div>
 
         {/* Footer Tagline */}
-        <div className="text-center mt-4 font-typewriter text-[9px] sm:text-[10px] uppercase tracking-widest text-amber-200/60">
+        <div className="text-center mt-3 font-typewriter text-[9px] uppercase tracking-widest text-amber-200/60">
           <span>The Git Times Telegraph Bureau · Established MMVIII</span>
         </div>
 
