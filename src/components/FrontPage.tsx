@@ -23,24 +23,24 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
           MASTHEAD
           ════════════════════════════════════════════════════ */}
       <header className="text-center mb-0 flex-shrink-0">
-        <div className="flex items-center justify-between font-body uppercase tracking-[0.2em] text-ink-muted pb-0.5"
-          style={{ fontSize: '8px', borderBottom: '0.5px solid rgba(26,22,21,0.3)' }}>
+        <div className="flex items-center justify-between font-body uppercase tracking-[0.18em] text-ink-muted pb-0.5"
+          style={{ fontSize: '7.5px', borderBottom: '0.5px solid rgba(26,22,21,0.25)' }}>
           <span>{profile.location}</span>
-          <span className="hidden md:inline font-typewriter tracking-[0.3em]" style={{ fontSize: '7px' }}>★ THE LEADING DAILY OF THE CODING REPUBLIC ★</span>
+          <span className="hidden md:inline font-typewriter tracking-[0.25em]" style={{ fontSize: '6.5px' }}>★ THE LEADING DAILY OF THE CODING REPUBLIC ★</span>
           <span>EST. MMVIII</span>
         </div>
-        <div className="rule-double my-1" style={{ height: '3px' }} />
-        <h1 className="font-masthead ink-bleed uppercase leading-none my-0.5" style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)', letterSpacing: '0.04em' }}>
+        <div className="rule-double my-0.5" style={{ height: '2px' }} />
+        <h1 className="font-masthead ink-bleed uppercase leading-none py-0.5" style={{ fontSize: 'clamp(1.3rem, 2.8vw, 2.2rem)', letterSpacing: '0.05em' }}>
           The Git Times
         </h1>
-        <p className="font-headline italic text-ink-sepia" style={{ fontSize: 'clamp(0.55rem, 1vw, 0.7rem)', letterSpacing: '0.15em' }}>
+        <p className="font-headline italic text-ink-sepia -mt-0.5 mb-0.5 font-semibold" style={{ fontSize: 'clamp(0.5rem, 0.9vw, 0.65rem)', letterSpacing: '0.12em' }}>
           "All the Commits Fit to Print"
         </p>
-        <div className="rule-double mt-0.5 mb-0" style={{ height: '3px' }} />
-        <div className="py-0.5 flex flex-wrap items-center justify-between font-typewriter uppercase tracking-[0.1em] text-ink font-bold"
-          style={{ fontSize: '8px', borderBottom: '1.5px solid #1a1615' }}>
+        <div className="rule-double my-0.5" style={{ height: '2px' }} />
+        <div className="py-0.5 flex flex-wrap items-center justify-between font-typewriter uppercase tracking-[0.08em] text-ink font-bold"
+          style={{ fontSize: '7.5px', borderBottom: '1.5px solid #1a1615' }}>
           <span>VOL. {profile.volumeNo}, NO. {profile.issueNo}</span>
-          <span className="flex items-center gap-1"><span style={{ fontSize: '5px' }}>✦</span> PRICE: TWO PULL REQUESTS <span style={{ fontSize: '5px' }}>✦</span></span>
+          <span className="flex items-center gap-1"><span style={{ fontSize: '4.5px' }}>✦</span> PRICE: TWO PULL REQUESTS <span style={{ fontSize: '4.5px' }}>✦</span></span>
           <span>{profile.dateStr}</span>
         </div>
       </header>

@@ -5,11 +5,12 @@ import { FrontPage } from './FrontPage';
 import { PageTwo } from './PageTwo';
 import { ClippingModal } from './ClippingModal';
 import { audioEngine } from '../services/audioEngine';
-import { BookOpen, RotateCcw } from 'lucide-react';
+import { BookOpen, RotateCcw, ArrowLeft, Search, X } from 'lucide-react';
 
 interface DeskSceneProps {
   profile: GitTimesProfile;
   onSearchUsername: (username: string) => void;
+  onBack: () => void;
   isLoading: boolean;
 }
 
@@ -54,12 +55,14 @@ function generateFoxingSpots() {
 export const DeskScene: React.FC<DeskSceneProps> = ({
   profile,
   onSearchUsername,
+  onBack,
   isLoading,
 }) => {
   const [currentPage, setCurrentPage] = useState<'front' | 'two'>('front');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [smoothMouse, setSmoothMouse] = useState({ x: 0, y: 0 });
   const [isFlipping, setIsFlipping] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [clippingModal, setClippingModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -116,6 +119,11 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     setClippingModal({ isOpen: true, title, category, content });
   }, []);
 
+  const handleSearchSubmit = (username: string) => {
+    setIsSearchOpen(false);
+    onSearchUsername(username);
+  };
+
   // Parallax depth layers
   const tiltX = smoothMouse.y * -3;
   const tiltY = smoothMouse.x * 5;
@@ -127,25 +135,47 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
   const shadowY = 30 + smoothMouse.y * 25;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-stone-950 flex flex-col items-center py-3 px-2 sm:px-4">
+    <div className="relative h-screen w-full overflow-hidden bg-stone-950 flex flex-col items-center py-2 px-2 sm:px-4 justify-center">
 
-      {/* ═══════ LAYER 0: MAHOGANY DESK BACKGROUND ═══════ */}
+      {/* ═══════ TOP-LEFT BACK & SEARCH CONTROLS ═══════ */}
+      <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
+        <button
+          onClick={() => {
+            audioEngine.playPaperRustle();
+            onBack();
+          }}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-amber-700/80 bg-amber-950/90 hover:bg-amber-900 text-amber-200 shadow-xl shadow-amber-950/40 transition-all font-typewriter text-xs uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95"
+          title="Back to Previous Edition"
+        >
+          <ArrowLeft className="w-4 h-4 text-amber-400" />
+          <span>Back</span>
+        </button>
+
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-amber-900/60 bg-stone-900/90 hover:bg-stone-800 text-amber-200/80 hover:text-amber-100 shadow-lg transition-all font-typewriter text-xs uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95"
+          title="Typeset New GitHub Username"
+        >
+          <Search className="w-3.5 h-3.5 text-amber-500" />
+          <span className="hidden sm:inline">Search</span>
+        </button>
+      </div>
+
+      {/* ═══════ LAYER 0: NEWSPAPER BACKGROUND ═══════ */}
       <div
         className="fixed inset-0 pointer-events-none z-0"
         style={{
           backgroundImage: `url('/assets/newspaper_bg.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.55) contrast(1.2) saturate(0.8)',
+          filter: 'brightness(0.68) contrast(1.15) saturate(0.85)',
         }}
       />
-      {/* Vignette overlay — deeper, warmer */}
-      <div className="fixed inset-0 bg-radial-vignette pointer-events-none z-[1]" />
-      {/* Warm color wash */}
-      <div className="fixed inset-0 bg-amber-950/15 pointer-events-none z-[1] mix-blend-multiply" />
+      {/* Vignette overlay */}
+      <div className="fixed inset-0 bg-radial-vignette pointer-events-none z-[1]" opacity-60 />
+      <div className="fixed inset-0 bg-amber-950/10 pointer-events-none z-[1] mix-blend-multiply" />
 
       {/* ═══════ LAYER 1: CANDLE GLOW LIGHTS ═══════ */}
-      {/* Primary candle glow — top right */}
       <div
         className="fixed pointer-events-none z-[2] candle-glow-bleed rounded-full"
         style={{
@@ -157,7 +187,6 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
           transform: `translate(${layer2X * 0.3}px, ${layer2Y * 0.3}px)`,
         }}
       />
-      {/* Secondary candle glow — bottom left (softer) */}
       <div
         className="fixed pointer-events-none z-[2] candle-glow-bleed rounded-full"
         style={{
@@ -170,7 +199,6 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
           animationDelay: '1.5s',
         }}
       />
-      {/* Warm light bleed on paper edges */}
       <div
         className="fixed pointer-events-none z-[15] warm-light-on-paper rounded-full"
         style={{
@@ -195,29 +223,22 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         className="fixed inset-0 pointer-events-none z-[4]"
         style={{ transform: `translate3d(${layer1X}px, ${layer1Y}px, 0)`, transition: 'transform 0.1s linear' }}
       >
-        {/* ── TOP-RIGHT CANDLE (realistic multi-part) ── */}
+        {/* ── TOP-RIGHT CANDLE ── */}
         <div className="absolute top-4 right-6 md:right-14 flex flex-col items-center">
-          {/* Flame outer glow aura */}
           <div className="absolute -top-8 w-20 h-20 rounded-full candle-glow-bleed"
             style={{ background: 'radial-gradient(circle, rgba(255, 180, 60, 0.35) 0%, transparent 70%)' }} />
-          {/* Flame outer (amber/orange) */}
           <div className="relative">
             <div className="w-4 h-7 rounded-full candle-flame mx-auto"
               style={{ background: 'linear-gradient(to top, #e67e22 0%, #f39c12 30%, #f1c40f 60%, rgba(255,255,255,0.9) 100%)' }}>
-              {/* Flame inner core (blue/white) */}
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-3 rounded-full flame-core"
                 style={{ background: 'linear-gradient(to top, #3498db 0%, #ecf0f1 60%, white 100%)' }} />
             </div>
-            {/* Wick */}
             <div className="w-0.5 h-2 bg-stone-800 mx-auto" />
-            {/* Candle body — wax with realistic gradient + drip marks */}
             <div className="w-7 h-20 mx-auto rounded-t-sm relative overflow-hidden"
               style={{ background: 'linear-gradient(to right, #f5e6c8, #faf0dc 40%, #f0dbb8)' }}>
-              {/* Wax drip */}
               <div className="absolute top-0 left-1 w-2 h-5 rounded-b-full"
                 style={{ background: 'linear-gradient(to bottom, #faf0dc, #ebe0c8)' }} />
             </div>
-            {/* Brass candlestick holder */}
             <div className="w-10 h-2 rounded-sm mx-auto -mt-0.5"
               style={{ background: 'linear-gradient(to bottom, #c9a84c, #8b6914, #a67c23)' }} />
             <div className="w-14 h-3 rounded-full mx-auto"
@@ -226,56 +247,27 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         </div>
 
         {/* ── TOP-LEFT VINTAGE PROPS ── */}
-        <div className="absolute top-8 left-3 md:left-10 hidden sm:block">
+        <div className="absolute top-14 left-3 md:left-10 hidden sm:block">
           <img
             src="/assets/vintage_props.png"
             alt="Vintage desk props"
-            className="w-40 md:w-52 opacity-85 -rotate-6"
+            className="w-40 md:w-48 opacity-80 -rotate-6"
             style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.6)) brightness(0.9) contrast(1.1)' }}
           />
         </div>
-
-        {/* ── BOTTOM-LEFT SCATTERED LEAVES (CSS only) ── */}
-        <div className="absolute bottom-16 left-8 hidden md:block">
-          <div className="w-8 h-5 rounded-full rotate-[35deg] opacity-40"
-            style={{ background: 'linear-gradient(135deg, #6b4226, #8b5e3c)', boxShadow: '2px 3px 6px rgba(0,0,0,0.3)' }} />
-          <div className="w-6 h-4 rounded-full rotate-[-20deg] opacity-35 ml-4 -mt-1"
-            style={{ background: 'linear-gradient(135deg, #5c3a1e, #7a4f30)', boxShadow: '2px 3px 6px rgba(0,0,0,0.3)' }} />
-        </div>
-
-        {/* ── BOTTOM-RIGHT SMALL CANDLE (oil lamp style) ── */}
-        <div className="absolute bottom-12 right-10 hidden md:flex flex-col items-center">
-          <div className="w-3 h-5 rounded-full candle-flame mx-auto"
-            style={{ background: 'linear-gradient(to top, #d35400 0%, #f39c12 50%, rgba(255,255,200,0.9) 100%)', animationDelay: '0.7s' }}>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-2 rounded-full flame-core"
-              style={{ background: 'linear-gradient(to top, #2980b9 0%, white 100%)', animationDelay: '0.9s' }} />
-          </div>
-          <div className="w-8 h-6 rounded-b-full"
-            style={{ background: 'linear-gradient(to bottom, #8b6914, #5c4510)', boxShadow: '0 3px 8px rgba(0,0,0,0.5)' }} />
-        </div>
       </div>
 
-      {/* ═══════ LAYER 4: SECONDARY PROPS (SHALLOW PARALLAX) ═══════ */}
+      {/* ═══════ LAYER 4: SECONDARY PROPS ═══════ */}
       <div
         className="fixed inset-0 pointer-events-none z-[5]"
         style={{ transform: `translate3d(${layer2X}px, ${layer2Y}px, 0)`, transition: 'transform 0.1s linear' }}
       >
-        {/* Faint quill feather shadow on desk */}
         <div className="absolute top-40 left-6 hidden lg:block opacity-20 rotate-[150deg]"
           style={{ width: '120px', height: '4px', background: 'linear-gradient(to right, transparent, rgba(200,180,140,0.5), transparent)', filter: 'blur(2px)' }} />
       </div>
 
-      {/* ═══════ TYPEWRITER INPUT HEADER ═══════ */}
-      <div className="relative z-[20] flex-shrink-0">
-        <TypewriterHeader
-          onSearch={onSearchUsername}
-          isLoading={isLoading}
-          activeProfileName={profile.username}
-        />
-      </div>
-
-      {/* ═══════ 3D NEWSPAPER HERO SHEET ═══════ */}
-      <main className="relative z-[20] w-full max-w-[1400px] mx-auto flex-1 min-h-0 perspective-1000 my-2">
+      {/* ═══════ 3D NEWSPAPER HERO SHEET (BALANCED FRAMED SIZE) ═══════ */}
+      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1000 my-auto px-3 sm:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
           className="paper-idle-sway h-full"
@@ -292,7 +284,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             }`}
             style={{
               boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-              padding: 'clamp(12px, 2.5vw, 28px)',
+              padding: 'clamp(14px, 2.5vw, 32px)',
             }}
           >
             {/* Aged discoloration overlay */}
@@ -309,21 +301,12 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               ))}
             </div>
 
-            {/* Paper grain pseudo-element is in CSS ::before */}
-
-            {/* Corner curl — top right (realistic fold shadow) */}
+            {/* Corner curl */}
             <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-[5]"
               style={{
                 background: 'linear-gradient(225deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
                 clipPath: 'polygon(100% 0, 30% 0, 100% 70%)',
                 boxShadow: 'inset -2px 2px 4px rgba(0,0,0,0.08)',
-              }}
-            />
-            {/* Corner curl — bottom left (very subtle) */}
-            <div className="absolute bottom-0 left-0 w-10 h-10 pointer-events-none z-[5]"
-              style={{
-                background: 'linear-gradient(45deg, rgba(180, 160, 120, 0.2) 0%, transparent 40%)',
-                clipPath: 'polygon(0 100%, 0 40%, 60% 100%)',
               }}
             />
 
@@ -350,7 +333,6 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               {/* LOADING STATE — INK BLOT ANIMATION */}
               {isLoading ? (
                 <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                  {/* Ink blot */}
                   <div className="relative w-24 h-24 mx-auto">
                     <div className="ink-blot absolute inset-0" />
                     <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
@@ -389,6 +371,28 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
           </div>
         </div>
       </main>
+
+      {/* ═══════ SEARCH MODAL OVERLAY ═══════ */}
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn"
+          style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
+        >
+          <div className="relative w-full max-w-2xl">
+            <button
+              onClick={() => setIsSearchOpen(false)}
+              className="absolute -top-10 right-0 text-stone-400 hover:text-white transition-colors p-1"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <TypewriterHeader
+              onSearch={handleSearchSubmit}
+              isLoading={isLoading}
+              activeProfileName={profile.username}
+            />
+          </div>
+        </div>
+      )}
 
       {/* ═══════ CLIPPING LIGHTBOX MODAL ═══════ */}
       <ClippingModal

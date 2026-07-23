@@ -414,7 +414,7 @@
    CUSTOM FONT UTILITIES
    ================================================================ */
 
-.font-masthead { font-family: 'UnifrakturMaguntia', serif; }
+.font-masthead { font-family: 'Cinzel Decorative', 'Pirata One', 'Abril Fatface', 'Playfair Display', serif; font-weight: 900; }
 .font-headline { font-family: 'Playfair Display', serif; }
 .font-body { font-family: 'EB Garamond', 'Old Standard TT', serif; }
 .font-handwriting { font-family: 'Caveat', cursive; }
