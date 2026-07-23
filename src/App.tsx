@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DeskScene } from './components/DeskScene';
 import { LandingPage } from './components/LandingPage';
 import { AudioControls } from './components/AudioControls';
-import { MOCK_PROFILES, generateMockProfile, type GitTimesProfile } from './data/mockProfiles';
+import { MOCK_PROFILES, type GitTimesProfile } from './data/mockProfiles';
 import { fetchGitHubUserData } from './services/githubService';
 import { generateNewspaperProfile } from './services/geminiService';
 import { audioEngine } from './services/audioEngine';
@@ -20,7 +20,6 @@ export function App() {
   const handleSearchUsername = async (username: string) => {
     setIsLoading(true);
     setErrorMessage(null);
-    setHasSearched(true);
     audioEngine.playPaperRustle();
 
     try {
@@ -32,19 +31,14 @@ export function App() {
 
       setHistory((prev) => [...prev, activeProfile]);
       setActiveProfile(newProfile);
+      setHasSearched(true);
       setIsLoading(false);
       audioEngine.playCarriageReturn();
     } catch (err: any) {
-      console.warn('Real-time GitHub/Gemini fetch notice:', err?.message);
-      
-      // Fallback: If GitHub username search failed, generate mock fallback profile
-      setTimeout(() => {
-        setHistory((prev) => [...prev, activeProfile]);
-        const fallback = generateMockProfile(username);
-        setActiveProfile({ ...fallback, hasPageTwo: true });
-        setIsLoading(false);
-        audioEngine.playCarriageReturn();
-      }, 1000);
+      console.warn('GitHub search error:', err?.message);
+      setIsLoading(false);
+      // DO NOT generate fake mock profiles — show exact error message that profile does not exist!
+      setErrorMessage(err?.message || `GitHub profile "@${username}" does not exist. Please check the spelling.`);
     }
   };
 
@@ -64,17 +58,13 @@ export function App() {
       {/* Vintage Sound & Ambience Audio Controls */}
       <AudioControls />
 
-      {/* Error Toast Notification if any */}
-      {errorMessage && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[100] bg-red-950 text-red-200 border border-red-800 px-4 py-2 rounded-lg font-typewriter text-xs shadow-2xl animate-fadeIn">
-          <span>⚠️ {errorMessage}</span>
-          <button onClick={() => setErrorMessage(null)} className="ml-3 font-bold underline">Dismiss</button>
-        </div>
-      )}
-
       {/* Conditionally render Landing Page or 3D Desk Scene */}
       {!hasSearched ? (
-        <LandingPage onSearch={handleSearchUsername} isLoading={isLoading} />
+        <LandingPage
+          onSearch={handleSearchUsername}
+          isLoading={isLoading}
+          errorMessage={errorMessage}
+        />
       ) : (
         <DeskScene
           profile={activeProfile}

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, Flame, Compass } from 'lucide-react';
+import { Sparkles, ArrowRight, Flame, Compass, AlertCircle } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
 
 interface LandingPageProps {
   onSearch: (username: string) => void;
   isLoading: boolean;
+  errorMessage?: string | null;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading, errorMessage }) => {
   const [inputValue, setInputValue] = useState('');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -110,7 +111,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
         </div>
 
         {/* ═══════ VINTAGE TELEGRAM BLANK / DESK FRAME ═══════ */}
-        <div className="paper-texture deckled-paper coffee-stain p-7 sm:p-10 rounded-sm shadow-2xl relative border-2 border-[#1a1615] overflow-hidden"
+        <div className="paper-texture deckled-paper coffee-stain p-6 sm:p-8 rounded-sm shadow-2xl relative border-2 border-[#1a1615] overflow-hidden"
           style={{
             boxShadow: '0 30px 80px rgba(0,0,0,0.9), inset 0 0 40px rgba(0,0,0,0.08)',
             backgroundColor: '#d8c49d',
@@ -129,7 +130,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
           <div className="relative z-10">
             
             {/* Vintage Telegram Header Strip */}
-            <div className="border-b-2 border-[#1a1615] pb-2.5 mb-5">
+            <div className="border-b-2 border-[#1a1615] pb-2.5 mb-4">
               <div className="flex items-center justify-between font-typewriter text-[10.5px] sm:text-xs font-extrabold uppercase tracking-[0.15em] text-[#1a1615]">
                 <div className="flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-[#3b2b18]" />
@@ -141,16 +142,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
                 style={{ borderTop: '0.5px solid rgba(26,22,21,0.2)' }}>
                 <span>DESTINATION: FRONT PAGE</span>
                 <span>SERVICE: LIVE GITHUB FEED</span>
-                <span>STATUS: READY</span>
+                <span>STATUS: {errorMessage ? 'TELEGRAM ERROR' : 'READY'}</span>
               </div>
             </div>
 
-            <p className="font-body text-xs sm:text-base text-[#1a1615] leading-relaxed text-justify mb-5 font-medium">
+            {/* Telegram Error Alert Box */}
+            {errorMessage && (
+              <div
+                className="mb-4 p-3 bg-red-950/90 text-red-100 font-typewriter text-xs uppercase tracking-wider rounded-none border-2 border-red-800 shadow-xl flex items-center gap-2 animate-fadeIn"
+                style={{
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.6)',
+                }}
+              >
+                <AlertCircle className="w-4.5 h-4.5 text-red-400 flex-shrink-0" />
+                <span className="leading-normal font-bold">⚠️ TELEGRAM NOTICE: {errorMessage}</span>
+              </div>
+            )}
+
+            <p className="font-body text-xs sm:text-sm text-[#1a1615] leading-relaxed text-justify mb-4 font-medium">
               Enter any GitHub username below to order an authentic 1920s broadside edition. Our telegraph desk will live-fetch stats, repositories, and contribution records to compose a custom front page.
             </p>
 
             {/* Typesetting Input Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               <div className="relative">
                 <div className="font-typewriter text-[10px] sm:text-[11px] uppercase tracking-widest text-[#1a1615] font-extrabold mb-1.5 flex justify-between">
                   <span>[ TYPESET GITHUB USERNAME ]</span>
@@ -177,7 +191,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
               <button
                 type="submit"
                 disabled={isLoading || !inputValue.trim()}
-                className="w-full py-3.5 px-6 font-typewriter text-xs sm:text-base font-extrabold uppercase tracking-[0.2em] rounded-none transition-all transform active:scale-[0.97] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2.5 brass-shimmer-btn"
+                className="w-full py-3.5 px-6 font-typewriter text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] rounded-none transition-all transform active:scale-[0.97] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2.5 brass-shimmer-btn"
                 style={{
                   background: 'linear-gradient(to bottom, #3b2410, #1f1207)',
                   color: '#e5b95c',
@@ -201,18 +215,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
             </form>
 
             {/* Popular Developer Editions — Vintage Telegram Stamps */}
-            <div className="mt-5 pt-4 font-typewriter" style={{ borderTop: '0.5px solid rgba(26,22,21,0.25)' }}>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#1a1615] font-bold uppercase tracking-wider mb-2.5">
+            <div className="mt-4 pt-3 font-typewriter" style={{ borderTop: '0.5px solid rgba(26,22,21,0.25)' }}>
+              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#1a1615] font-bold uppercase tracking-wider mb-2">
                 <Sparkles className="w-4 h-4 text-amber-950 animate-pulse" />
                 <span>ARCHIVED POPULAR EDITIONS:</span>
               </div>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap gap-2">
                 {famousPresets.map((preset, idx) => (
                   <button
                     key={preset.username}
                     onClick={() => handlePresetClick(preset.username)}
                     disabled={isLoading}
-                    className="px-3 py-1.5 text-xs sm:text-sm font-bold text-[#1a1615] hover:text-amber-950 transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1.5 hover:shadow-md"
+                    className="px-2.5 py-1 text-xs sm:text-sm font-bold text-[#1a1615] hover:text-amber-950 transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1.5 hover:shadow-md"
                     style={{
                       backgroundColor: 'rgba(210, 190, 150, 0.55)',
                       border: '1px solid #1a1615',
