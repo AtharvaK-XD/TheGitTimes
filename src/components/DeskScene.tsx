@@ -260,7 +260,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             className="relative w-full h-full paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
             style={{
               boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-              padding: 'clamp(14px, 2.5vw, 32px)',
+              padding: 'clamp(12px, 2vw, 24px)',
             }}
           >
             {/* Aged discoloration overlay */}

@@ -141,9 +141,9 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
             )}
             className="newspaper-clipping flex-1 min-h-0 overflow-hidden"
           >
-            <div className="font-body text-justify text-ink leading-[1.55]" style={{ fontSize: '12.8px' }}>
-              <p className="drop-cap mb-1">{profile.bioArticle[0]}</p>
-              <p className="line-clamp-4">{profile.bioArticle[1]}</p>
+            <div className="font-body text-justify text-ink leading-[1.45] overflow-hidden" style={{ fontSize: '11.5px' }}>
+              <p className="drop-cap mb-1 line-clamp-3">{profile.bioArticle[0]}</p>
+              <p className="line-clamp-2">{profile.bioArticle[1]}</p>
             </div>
           </div>
         </div>
@@ -425,12 +425,12 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
               style={{ fontSize: '7px', borderBottom: '0.5px solid rgba(26,22,21,0.2)', paddingBottom: '2px' }}>
               ✦ Classifieds ✦
             </div>
-            <div className="font-typewriter text-ink" style={{ fontSize: '9px' }}>
-              {profile.classifieds.map((ad, idx) => (
-                <div key={idx} className="mb-1" style={{ borderBottom: idx < profile.classifieds.length - 1 ? '0.5px dotted rgba(26,22,21,0.15)' : 'none', paddingBottom: '2px' }}>
+            <div className="font-typewriter text-ink overflow-hidden" style={{ fontSize: '8.5px' }}>
+              {profile.classifieds.slice(0, 2).map((ad, idx) => (
+                <div key={idx} className="mb-0.5" style={{ borderBottom: idx < 1 ? '0.5px dotted rgba(26,22,21,0.15)' : 'none', paddingBottom: '1px' }}>
                   <span className="font-extrabold uppercase block leading-tight">{ad.title}</span>
-                  <p className="text-ink-muted leading-tight line-clamp-2">{ad.description}</p>
-                  <span className="text-ink-sepia font-bold" style={{ fontSize: '8px' }}>{ad.contact}</span>
+                  <p className="text-ink-muted leading-tight line-clamp-1">{ad.description}</p>
+                  <span className="text-ink-sepia font-bold" style={{ fontSize: '7.5px' }}>{ad.contact}</span>
                 </div>
               ))}
             </div>
