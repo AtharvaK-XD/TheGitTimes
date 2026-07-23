@@ -244,7 +244,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
       </div>
 
       {/* ═══════ 3D NEWSPAPER HERO SHEET (CENTERED BROADSIDE DESK) ═══════ */}
-      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1500 my-auto px-3 sm:px-6">
+      <main className="relative z-[20] w-full max-w-[1240px] xl:max-w-[1320px] mx-auto h-[85vh] max-h-[880px] flex-shrink-0 perspective-1500 my-auto px-3 sm:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
           className="paper-idle-sway h-full"
