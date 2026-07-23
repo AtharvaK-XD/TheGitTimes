@@ -81,9 +81,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
         }}
       />
 
-      {/* ═══════ MAIN ANCIENT TELEGRAPH BUREAU CARD (3D TILT - ENLARGED) ═══════ */}
+      {/* ═══════ MAIN ANCIENT TELEGRAPH BUREAU CARD (3D TILT) ═══════ */}
       <div
-        className="relative z-10 w-full max-w-3xl lg:max-w-4xl mx-auto animate-press-slide-in px-2 sm:px-4"
+        className="relative z-10 w-full max-w-2xl mx-auto animate-press-slide-in px-2 sm:px-4"
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
           transformStyle: 'preserve-3d',
@@ -92,21 +92,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
       >
         
         {/* Ancient Newspaper Banner Header */}
-        <div className="text-center mb-5 sm:mb-6">
-          <div className="flex items-center justify-center gap-2 font-typewriter text-[10px] sm:text-xs uppercase tracking-[0.3em] text-amber-200/80 mb-1.5">
+        <div className="text-center mb-4 sm:mb-5">
+          <div className="flex items-center justify-center gap-2 font-typewriter text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-amber-200/80 mb-1">
             <span>✦ POSTAL TELEGRAPH & TYPESETTING BUREAU ✦</span>
           </div>
 
-          <h1 className="font-masthead ink-bleed text-5xl sm:text-7xl md:text-8xl uppercase text-amber-100 tracking-wider mb-1 drop-shadow-2xl"
-            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(180,120,40,0.3)' }}>
+          <h1 className="font-masthead ink-bleed text-3xl sm:text-5xl md:text-6xl uppercase text-amber-100 tracking-wider mb-0.5 drop-shadow-2xl"
+            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8), 0 0 30px rgba(180,120,40,0.25)' }}>
             The Git Times
           </h1>
 
-          <p className="font-headline italic text-amber-200/90 text-xs sm:text-base tracking-widest">
+          <p className="font-headline italic text-amber-200/90 text-xs sm:text-sm tracking-widest">
             "All the Commits Fit to Print"
           </p>
 
-          <div className="w-44 h-0.5 bg-gradient-to-r from-transparent via-amber-600/60 to-transparent mx-auto my-3" />
+          <div className="w-36 h-0.5 bg-gradient-to-r from-transparent via-amber-600/60 to-transparent mx-auto my-2" />
         </div>
 
         {/* ═══════ VINTAGE TELEGRAM BLANK / DESK FRAME ═══════ */}
