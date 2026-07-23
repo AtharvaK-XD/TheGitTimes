@@ -22,7 +22,19 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
       {/* ════════════════════════════════════════════════════
           MASTHEAD
           ════════════════════════════════════════════════════ */}
-      <header className="text-center mb-0 flex-shrink-0">
+      <header className="text-center mb-0 flex-shrink-0 relative">
+        {/* Vintage Red Rubber Stamp on Top Corner */}
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            audioEngine.playStampThud();
+          }}
+          className="absolute top-1 right-2 hidden sm:block rubber-stamp text-[9px] cursor-pointer"
+          title="Click to verify stamp"
+        >
+          <span>✓ VERIFIED DISPATCH</span>
+        </div>
+
         <div className="flex items-center justify-between font-body uppercase tracking-[0.18em] text-ink-muted pb-0.5"
           style={{ fontSize: '7.5px', borderBottom: '0.5px solid rgba(26,22,21,0.25)' }}>
           <span>{profile.location}</span>
@@ -314,7 +326,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
             </div>
           </div>
 
-          {/* Classifieds Strip */}
+          {/* Classifieds Strip with Wax Seal */}
           <footer
             onClick={() => handleClickClipping('Classifieds', 'Classified Advertisements',
               <div className="space-y-3 font-typewriter">
@@ -327,7 +339,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
                 ))}
               </div>
             )}
-            className="newspaper-clipping flex-1 min-h-0 overflow-hidden"
+            className="newspaper-clipping flex-1 min-h-0 overflow-hidden relative"
             style={{ borderTop: '1.5px solid #1a1615' }}
           >
             <div className="text-center font-typewriter font-bold uppercase tracking-[0.15em] text-ink mb-1"
@@ -342,6 +354,21 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
                   <span className="text-ink-sepia font-bold" style={{ fontSize: '8px' }}>{ad.contact}</span>
                 </div>
               ))}
+            </div>
+
+            {/* 3D Wax Seal Emblem */}
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                audioEngine.playStampThud();
+              }}
+              className="wax-seal absolute bottom-1 right-2 hidden sm:flex items-center justify-center text-center select-none"
+              title="Official Gazette Wax Seal (Click for stamp thud)"
+            >
+              <div className="text-[7px] font-masthead text-amber-200 uppercase leading-none tracking-tighter">
+                <span>GIT</span>
+                <span className="block font-sans text-[5px] text-amber-300/80">★ MMVIII ★</span>
+              </div>
             </div>
           </footer>
         </div>

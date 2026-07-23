@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { GitTimesProfile } from '../data/mockProfiles';
 import { TypewriterHeader } from './TypewriterHeader';
 import { FrontPage } from './FrontPage';
 import { PageTwo } from './PageTwo';
 import { ClippingModal } from './ClippingModal';
 import { audioEngine } from '../services/audioEngine';
-import { BookOpen, RotateCcw, ArrowLeft, Search, X } from 'lucide-react';
+import { BookOpen, RotateCcw, ArrowLeft, Search, X, ZoomIn } from 'lucide-react';
 
 interface DeskSceneProps {
   profile: GitTimesProfile;
@@ -60,9 +60,15 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState<'front' | 'two'>('front');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [clientPos, setClientPos] = useState({ x: 0, y: 0 });
   const [smoothMouse, setSmoothMouse] = useState({ x: 0, y: 0 });
   const [isFlipping, setIsFlipping] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoupeActive, setIsLoupeActive] = useState(false);
+  const [paperRelPos, setPaperRelPos] = useState({ x: 0, y: 0, width: 1140, height: 800 });
+  
+  const paperRef = useRef<HTMLDivElement>(null);
+
   const [clippingModal, setClippingModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -78,13 +84,21 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
   const dustParticles = useMemo(() => generateDustParticles(18), []);
   const foxingSpots = useMemo(() => generateFoxingSpots(), []);
 
-  // Smooth mouse tracking with lerp for silky parallax
+  // Smooth mouse tracking with lerp for silky parallax & paper rel pos calculation
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX / innerWidth) * 2 - 1;
       const y = (e.clientY / innerHeight) * 2 - 1;
       setMousePos({ x, y });
+      setClientPos({ x: e.clientX, y: e.clientY });
+
+      if (paperRef.current) {
+        const rect = paperRef.current.getBoundingClientRect();
+        const relX = e.clientX - rect.left;
+        const relY = e.clientY - rect.top;
+        setPaperRelPos({ x: relX, y: relY, width: rect.width, height: rect.height });
+      }
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
@@ -124,11 +138,14 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     onSearchUsername(username);
   };
 
+  const toggleLoupe = () => {
+    audioEngine.playPaperRustle();
+    setIsLoupeActive(prev => !prev);
+  };
+
   // Parallax depth layers
   const tiltX = smoothMouse.y * -3;
   const tiltY = smoothMouse.x * 5;
-  const layer1X = smoothMouse.x * -18;
-  const layer1Y = smoothMouse.y * -18;
   const layer2X = smoothMouse.x * -10;
   const layer2Y = smoothMouse.y * -10;
   const shadowX = -smoothMouse.x * 30;
@@ -137,7 +154,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
   return (
     <div className="relative h-screen w-full overflow-hidden bg-stone-950 flex flex-col items-center py-2 px-2 sm:px-4 justify-center">
 
-      {/* ═══════ TOP-LEFT BACK & SEARCH CONTROLS ═══════ */}
+      {/* ═══════ TOP-LEFT BACK, SEARCH & LOUPE CONTROLS ═══════ */}
       <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
         <button
           onClick={() => {
@@ -158,6 +175,19 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         >
           <Search className="w-3.5 h-3.5 text-amber-500" />
           <span className="hidden sm:inline">Search</span>
+        </button>
+
+        <button
+          onClick={toggleLoupe}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-full border shadow-lg transition-all font-typewriter text-xs uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95 ${
+            isLoupeActive
+              ? 'bg-amber-500 text-amber-950 border-amber-300 font-extrabold shadow-amber-500/50'
+              : 'bg-stone-900/90 text-amber-200/80 border-amber-900/60 hover:bg-stone-800'
+          }`}
+          title="Toggle Antique Brass Magnifying Glass (2.2x Optical Zoom)"
+        >
+          <ZoomIn className="w-3.5 h-3.5 text-amber-400" />
+          <span className="hidden md:inline">{isLoupeActive ? 'Lens ON (2.2x)' : 'Loupe'}</span>
         </button>
       </div>
 
@@ -218,55 +248,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         ))}
       </div>
 
-      {/* ═══════ LAYER 3: PERIOD PROPS (DEEP PARALLAX) ═══════ */}
-      <div
-        className="fixed inset-0 pointer-events-none z-[4]"
-        style={{ transform: `translate3d(${layer1X}px, ${layer1Y}px, 0)`, transition: 'transform 0.1s linear' }}
-      >
-        {/* ── TOP-RIGHT CANDLE ── */}
-        <div className="absolute top-4 right-6 md:right-14 flex flex-col items-center">
-          <div className="absolute -top-8 w-20 h-20 rounded-full candle-glow-bleed"
-            style={{ background: 'radial-gradient(circle, rgba(255, 180, 60, 0.35) 0%, transparent 70%)' }} />
-          <div className="relative">
-            <div className="w-4 h-7 rounded-full candle-flame mx-auto"
-              style={{ background: 'linear-gradient(to top, #e67e22 0%, #f39c12 30%, #f1c40f 60%, rgba(255,255,255,0.9) 100%)' }}>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-3 rounded-full flame-core"
-                style={{ background: 'linear-gradient(to top, #3498db 0%, #ecf0f1 60%, white 100%)' }} />
-            </div>
-            <div className="w-0.5 h-2 bg-stone-800 mx-auto" />
-            <div className="w-7 h-20 mx-auto rounded-t-sm relative overflow-hidden"
-              style={{ background: 'linear-gradient(to right, #f5e6c8, #faf0dc 40%, #f0dbb8)' }}>
-              <div className="absolute top-0 left-1 w-2 h-5 rounded-b-full"
-                style={{ background: 'linear-gradient(to bottom, #faf0dc, #ebe0c8)' }} />
-            </div>
-            <div className="w-10 h-2 rounded-sm mx-auto -mt-0.5"
-              style={{ background: 'linear-gradient(to bottom, #c9a84c, #8b6914, #a67c23)' }} />
-            <div className="w-14 h-3 rounded-full mx-auto"
-              style={{ background: 'linear-gradient(to bottom, #a67c23, #7a5c16, #8b6914)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }} />
-          </div>
-        </div>
-
-        {/* ── TOP-LEFT VINTAGE PROPS ── */}
-        <div className="absolute top-14 left-3 md:left-10 hidden sm:block">
-          <img
-            src="/assets/vintage_props.png"
-            alt="Vintage desk props"
-            className="w-40 md:w-48 opacity-80 -rotate-6"
-            style={{ filter: 'drop-shadow(4px 6px 12px rgba(0,0,0,0.6)) brightness(0.9) contrast(1.1)' }}
-          />
-        </div>
-      </div>
-
-      {/* ═══════ LAYER 4: SECONDARY PROPS ═══════ */}
-      <div
-        className="fixed inset-0 pointer-events-none z-[5]"
-        style={{ transform: `translate3d(${layer2X}px, ${layer2Y}px, 0)`, transition: 'transform 0.1s linear' }}
-      >
-        <div className="absolute top-40 left-6 hidden lg:block opacity-20 rotate-[150deg]"
-          style={{ width: '120px', height: '4px', background: 'linear-gradient(to right, transparent, rgba(200,180,140,0.5), transparent)', filter: 'blur(2px)' }} />
-      </div>
-
-      {/* ═══════ 3D NEWSPAPER HERO SHEET (BALANCED FRAMED SIZE) ═══════ */}
+      {/* ═══════ 3D NEWSPAPER HERO SHEET ═══════ */}
       <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1000 my-auto px-3 sm:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
@@ -279,6 +261,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         >
           {/* Paper Sheet */}
           <div
+            ref={paperRef}
             className={`relative w-full h-full paper-texture deckled-paper coffee-stain coffee-stain-2 transition-all duration-700 transform-gpu flex flex-col ${
               isFlipping ? 'scale-[0.97] opacity-90' : ''
             }`}
@@ -328,7 +311,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
             </button>
 
-            {/* ── CONTENT AREA (relative z-index above overlays) ── */}
+            {/* ── CONTENT AREA ── */}
             <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
               {/* LOADING STATE — INK BLOT ANIMATION */}
               {isLoading ? (
@@ -371,6 +354,50 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
           </div>
         </div>
       </main>
+
+      {/* ═══════ BRASS MAGNIFYING GLASS LOUPE (REAL 2.2X OPTICAL MAGNIFICATION) ═══════ */}
+      {isLoupeActive && (
+        <div
+          className="fixed pointer-events-none z-[99] -translate-x-1/2 -translate-y-1/2 w-[210px] h-[210px] rounded-full overflow-hidden"
+          style={{
+            left: `${clientPos.x}px`,
+            top: `${clientPos.y}px`,
+            border: '6px solid #b8860b',
+            boxShadow: '0 16px 45px rgba(0,0,0,0.75), inset 0 0 20px rgba(0,0,0,0.5), 0 0 0 2px rgba(80,55,15,0.9)',
+          }}
+        >
+          {/* Brass handle extending diagonally */}
+          <div className="absolute -bottom-14 -right-14 w-4 h-32 bg-gradient-to-t from-amber-950 via-amber-800 to-amber-600 rounded-full border-2 border-amber-500 shadow-2xl rotate-45 z-30 pointer-events-none" />
+
+          {/* Convex Lens Reflection Glare */}
+          <div
+            className="absolute inset-0 rounded-full pointer-events-none z-20"
+            style={{
+              background: 'radial-gradient(ellipse at 32% 28%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 40%, transparent 70%)',
+              boxShadow: 'inset 0 0 15px rgba(212,175,55,0.3)',
+            }}
+          />
+
+          {/* 2.2X OPTICAL MAGNIFIED CLONED VIEWPORT */}
+          <div
+            className="absolute paper-texture pointer-events-none select-none overflow-hidden"
+            style={{
+              width: `${paperRelPos.width}px`,
+              height: `${paperRelPos.height}px`,
+              transform: `translate(${105 - paperRelPos.x * 2.2}px, ${105 - paperRelPos.y * 2.2}px) scale(2.2)`,
+              transformOrigin: '0 0',
+            }}
+          >
+            <div className="p-3 md:p-7">
+              {currentPage === 'front' ? (
+                <FrontPage profile={profile} onInspectClipping={() => {}} />
+              ) : (
+                <PageTwo profile={profile} onInspectClipping={() => {}} />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ═══════ SEARCH MODAL OVERLAY ═══════ */}
       {isSearchOpen && (

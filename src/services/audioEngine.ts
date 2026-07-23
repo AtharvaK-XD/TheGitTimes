@@ -128,6 +128,29 @@ class AudioEngine {
     noiseNode.start(now);
   }
 
+  // Synthesize realistic rubber stamp / wax seal impact thud
+  public playStampThud() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.45, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.14);
+  }
+
   // Start continuous subtle ambient crackling (candle/fireplace ambience)
   public startAmbient() {
     if (this.isAmbientPlaying || !window.AudioContext) return;
