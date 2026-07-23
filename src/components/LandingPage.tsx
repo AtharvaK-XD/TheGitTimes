@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Flame, Compass } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
 
@@ -9,6 +9,21 @@ interface LandingPageProps {
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading }) => {
   const [inputValue, setInputValue] = useState('');
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { innerWidth, innerHeight } = window;
+      const x = (e.clientX / innerWidth) * 2 - 1;
+      const y = (e.clientY / innerHeight) * 2 - 1;
+      setMousePos({ x, y });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const tiltX = mousePos.y * -4;
+  const tiltY = mousePos.x * 6;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +53,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
   ];
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden select-none">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden select-none perspective-1000">
       
       {/* ═══════ BACKGROUND NEWSPAPER TEXTURE ═══════ */}
       <div
@@ -66,11 +81,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
         }}
       />
 
-      {/* ═══════ MAIN ANCIENT TELEGRAPH BUREAU CARD ═══════ */}
-      <div className="relative z-10 w-full max-w-2xl mx-auto">
+      {/* ═══════ MAIN ANCIENT TELEGRAPH BUREAU CARD (3D TILT) ═══════ */}
+      <div
+        className="relative z-10 w-full max-w-2xl mx-auto animate-press-slide-in"
+        style={{
+          transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.15s ease-out',
+        }}
+      >
         
         {/* Ancient Newspaper Banner Header */}
-        <div className="text-center mb-5 animate-fadeIn">
+        <div className="text-center mb-5">
           <div className="flex items-center justify-center gap-2 font-typewriter text-[9px] sm:text-[10px] uppercase tracking-[0.3em] text-amber-200/80 mb-1.5">
             <span>✦ POSTAL TELEGRAPH & TYPESETTING BUREAU ✦</span>
           </div>
@@ -151,16 +173,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
                 />
               </div>
 
-              {/* Submit CTA Button — Heavy Brass Press Plate */}
+              {/* Submit CTA Button — Heavy Brass Press Plate with Metallic Shimmer */}
               <button
                 type="submit"
                 disabled={isLoading || !inputValue.trim()}
-                className="w-full py-3 px-6 font-typewriter text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] rounded-none transition-all transform active:scale-[0.98] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 font-typewriter text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] rounded-none transition-all transform active:scale-[0.97] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 brass-shimmer-btn"
                 style={{
                   background: 'linear-gradient(to bottom, #3b2410, #1f1207)',
                   color: '#e5b95c',
                   border: '2px solid #8b6914',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,200,100,0.2)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,200,100,0.25)',
                   textShadow: '0 1px 2px #000',
                 }}
               >
@@ -181,7 +203,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
             {/* Popular Developer Editions — Vintage Telegram Stamps */}
             <div className="mt-4 pt-3 font-typewriter" style={{ borderTop: '0.5px solid rgba(26,22,21,0.25)' }}>
               <div className="flex items-center gap-1 text-[10px] text-[#1a1615] font-bold uppercase tracking-wider mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-amber-950" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-950 animate-pulse" />
                 <span>ARCHIVED POPULAR EDITIONS:</span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -190,7 +212,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSearch, isLoading })
                     key={preset.username}
                     onClick={() => handlePresetClick(preset.username)}
                     disabled={isLoading}
-                    className="px-2.5 py-1 text-[10.5px] font-bold text-[#1a1615] hover:text-amber-950 transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1"
+                    className="px-2.5 py-1 text-[10.5px] font-bold text-[#1a1615] hover:text-amber-950 transition-all cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-50 flex items-center gap-1 hover:shadow-md"
                     style={{
                       backgroundColor: 'rgba(210, 190, 150, 0.55)',
                       border: '1px solid #1a1615',
