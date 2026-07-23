@@ -119,15 +119,16 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [mousePos]);
 
+  // Real 3D Newspaper Page Flip Handler
   const handleFlipPage = useCallback(() => {
-    if (isFlipping) return;
+    if (isFlipping || profile.hasPageTwo === false) return;
     audioEngine.playPaperRustle();
     setIsFlipping(true);
+    setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
     setTimeout(() => {
-      setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
       setIsFlipping(false);
-    }, 600);
-  }, [isFlipping]);
+    }, 750);
+  }, [isFlipping, profile.hasPageTwo]);
 
   const handleInspectClipping = useCallback((title: string, category: string, content: React.ReactNode) => {
     setClippingModal({ isOpen: true, title, category, content });
@@ -162,7 +163,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             onBack();
           }}
           className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-amber-700/80 bg-amber-950/90 hover:bg-amber-900 text-amber-200 shadow-xl shadow-amber-950/40 transition-all font-typewriter text-xs uppercase tracking-wider cursor-pointer hover:scale-105 active:scale-95"
-          title="Back to Previous Edition"
+          title="Back to Telegraph Station"
         >
           <ArrowLeft className="w-4 h-4 text-amber-400" />
           <span>Back</span>
@@ -202,7 +203,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         }}
       />
       {/* Vignette overlay */}
-      <div className="fixed inset-0 bg-radial-vignette pointer-events-none z-[1]" opacity-60 />
+      <div className="fixed inset-0 bg-radial-vignette pointer-events-none z-[1]" />
       <div className="fixed inset-0 bg-amber-950/10 pointer-events-none z-[1] mix-blend-multiply" />
 
       {/* ═══════ LAYER 1: CANDLE GLOW LIGHTS ═══════ */}
@@ -229,17 +230,6 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
           animationDelay: '1.5s',
         }}
       />
-      <div
-        className="fixed pointer-events-none z-[15] warm-light-on-paper rounded-full"
-        style={{
-          top: '10%',
-          right: '20%',
-          width: '350px',
-          height: '250px',
-          background: 'radial-gradient(ellipse, rgba(255, 180, 60, 0.06) 0%, transparent 70%)',
-          transform: `translate(${layer2X * 0.4}px, ${layer2Y * 0.4}px)`,
-        }}
-      />
 
       {/* ═══════ LAYER 2: ATMOSPHERIC DUST MOTES ═══════ */}
       <div className="fixed inset-0 pointer-events-none z-[3] overflow-hidden">
@@ -248,125 +238,178 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
         ))}
       </div>
 
-      {/* ═══════ 3D NEWSPAPER HERO SHEET ═══════ */}
-      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1000 my-auto px-3 sm:px-6">
+      {/* ═══════ 3D NEWSPAPER HERO SHEET (REAL DUAL-SIDED PAGE FLIP) ═══════ */}
+      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1500 my-auto px-3 sm:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
-          className="paper-idle-sway h-full"
+          className="paper-idle-sway h-full transform-style-preserve-3d"
           style={{
             transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(8px)`,
-            transformStyle: 'preserve-3d',
             transition: 'transform 0.15s linear',
           }}
         >
-          {/* Paper Sheet */}
+          {/* Dual-Sided 3D Flipping Paper Leaf Container */}
           <div
             ref={paperRef}
-            className={`relative w-full h-full paper-texture deckled-paper coffee-stain coffee-stain-2 transition-all duration-700 transform-gpu flex flex-col ${
-              isFlipping ? 'scale-[0.97] opacity-90' : ''
-            }`}
+            className="relative w-full h-full transform-style-preserve-3d transition-transform duration-750 ease-in-out"
             style={{
-              boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-              padding: 'clamp(14px, 2.5vw, 32px)',
+              transform: currentPage === 'two' ? 'rotateY(-180deg)' : 'rotateY(0deg)',
+              transformOrigin: 'left center',
+              boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35)`,
             }}
           >
-            {/* Aged discoloration overlay */}
-            <div className="paper-aged-overlay" />
+            {/* ════════ FRONT FACE (PAGE 1) ════════ */}
+            <div
+              className="absolute inset-0 w-full h-full paper-texture deckled-paper coffee-stain coffee-stain-2 backface-hidden flex flex-col"
+              style={{
+                transform: 'rotateY(0deg)',
+                padding: 'clamp(14px, 2.5vw, 32px)',
+              }}
+            >
+              {/* Aged discoloration overlay */}
+              <div className="paper-aged-overlay" />
+              <div className="paper-creases" />
 
-            {/* Paper fold creases & cross folds */}
-            <div className="paper-creases" />
+              {/* Foxing spots */}
+              <div className="foxing-spots">
+                {foxingSpots.map((spot, i) => (
+                  <div key={i} className="foxing-spot"
+                    style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
+                ))}
+              </div>
 
-            {/* Foxing spots */}
-            <div className="foxing-spots">
-              {foxingSpots.map((spot, i) => (
-                <div key={i} className="foxing-spot"
-                  style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
-              ))}
+              {/* Corner curl */}
+              <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-[5]"
+                style={{
+                  background: 'linear-gradient(225deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
+                  clipPath: 'polygon(100% 0, 30% 0, 100% 70%)',
+                  boxShadow: 'inset -2px 2px 4px rgba(0,0,0,0.08)',
+                }}
+              />
+
+              {/* Page Turn Button */}
+              {profile.hasPageTwo !== false ? (
+                <button
+                  onClick={handleFlipPage}
+                  disabled={isFlipping}
+                  className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer shadow-lg"
+                  style={{
+                    background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
+                    color: '#d4a84a',
+                    border: '1px solid #5c3a18',
+                    borderRadius: '3px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
+                  }}
+                  title="Flip to Page 2 in 3D"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Turn to Page 2 →</span>
+                </button>
+              ) : (
+                <div
+                  className="absolute top-3 right-3 z-[30] px-2.5 py-1 font-typewriter text-[9px] uppercase tracking-[0.12em] text-ink-muted opacity-80"
+                  style={{
+                    background: 'rgba(230,215,188,0.4)',
+                    border: '0.5px solid rgba(26,22,21,0.2)',
+                    borderRadius: '3px',
+                  }}
+                >
+                  ★ Complete Single-Page Edition ★
+                </div>
+              )}
+
+              {/* Page 1 Content Area */}
+              <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
+                {isLoading ? (
+                  <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+                    <div className="relative w-24 h-24 mx-auto">
+                      <div className="ink-blot absolute inset-0" />
+                      <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
+                      <div className="ink-blot absolute inset-4" style={{ animationDelay: '1s' }} />
+                    </div>
+                    <h3 className="font-typewriter text-xl text-ink-muted font-bold uppercase tracking-[0.2em]">
+                      Typesetting Edition
+                    </h3>
+                    <p className="font-body italic text-base text-ink-sepia">
+                      Composing dispatch for <strong>@{profile.username}</strong> ...
+                    </p>
+                    <div className="flex justify-center items-center gap-1 font-typewriter text-sm text-ink-muted">
+                      <span>■</span>
+                      <span className="typewriter-cursor">|</span>
+                    </div>
+                  </div>
+                ) : (
+                  <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
+                )}
+              </div>
+
+              {/* Bottom Page 1 Indicator */}
+              <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                <span>The Git Times</span>
+                {profile.hasPageTwo !== false ? (
+                  <button onClick={handleFlipPage} className="hover:text-ink font-bold flex items-center gap-1 transition-colors">
+                    <span>Page 1 of 2</span>
+                    <RotateCcw className="w-2.5 h-2.5" />
+                  </button>
+                ) : (
+                  <span className="font-bold">Page 1 of 1</span>
+                )}
+                <span>{profile.dateStr}</span>
+              </div>
             </div>
 
-            {/* Corner curl */}
-            <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-[5]"
+            {/* ════════ BACK FACE (PAGE 2) ════════ */}
+            <div
+              className="absolute inset-0 w-full h-full paper-texture deckled-paper coffee-stain backface-hidden flex flex-col"
               style={{
-                background: 'linear-gradient(225deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
-                clipPath: 'polygon(100% 0, 30% 0, 100% 70%)',
-                boxShadow: 'inset -2px 2px 4px rgba(0,0,0,0.08)',
+                transform: 'rotateY(180deg)',
+                padding: 'clamp(14px, 2.5vw, 32px)',
               }}
-            />
+            >
+              {/* Aged discoloration overlay */}
+              <div className="paper-aged-overlay" />
+              <div className="paper-creases" />
 
-            {/* Page Turn Button — Only rendered if profile has Page 2 */}
-            {profile.hasPageTwo !== false ? (
+              {/* Foxing spots */}
+              <div className="foxing-spots">
+                {foxingSpots.map((spot, i) => (
+                  <div key={i} className="foxing-spot"
+                    style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
+                ))}
+              </div>
+
+              {/* Return to Front Page Button */}
               <button
                 onClick={handleFlipPage}
                 disabled={isFlipping}
-                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer shadow-lg"
                 style={{
                   background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
                   color: '#d4a84a',
                   border: '1px solid #5c3a18',
                   borderRadius: '3px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,200,100,0.1)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
                 }}
-                title="Flip to next newspaper page"
+                title="Return to Front Page in 3D"
               >
-                <BookOpen className="w-3.5 h-3.5" style={{ color: '#d4a84a' }} />
-                <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
+                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                <span>← Return to Front Page</span>
               </button>
-            ) : (
-              <div
-                className="absolute top-3 right-3 z-[30] px-2.5 py-1 font-typewriter text-[9px] uppercase tracking-[0.12em] text-ink-muted opacity-80"
-                style={{
-                  background: 'rgba(230,215,188,0.4)',
-                  border: '0.5px solid rgba(26,22,21,0.2)',
-                  borderRadius: '3px',
-                }}
-              >
-                ★ Complete Single-Page Edition ★
-              </div>
-            )}
 
-            {/* ── CONTENT AREA ── */}
-            <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
-              {/* LOADING STATE — INK BLOT ANIMATION */}
-              {isLoading ? (
-                <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                  <div className="relative w-24 h-24 mx-auto">
-                    <div className="ink-blot absolute inset-0" />
-                    <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
-                    <div className="ink-blot absolute inset-4" style={{ animationDelay: '1s' }} />
-                  </div>
-                  <h3 className="font-typewriter text-xl text-ink-muted font-bold uppercase tracking-[0.2em]">
-                    Typesetting Edition
-                  </h3>
-                  <p className="font-body italic text-base text-ink-sepia">
-                    Composing dispatch for <strong>@{profile.username}</strong> ...
-                  </p>
-                  <div className="flex justify-center items-center gap-1 font-typewriter text-sm text-ink-muted">
-                    <span>■</span>
-                    <span className="typewriter-cursor">|</span>
-                  </div>
-                </div>
-              ) : currentPage === 'front' || profile.hasPageTwo === false ? (
-                <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
-              ) : (
+              {/* Page 2 Content Area */}
+              <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
                 <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
-              )}
-            </div>
+              </div>
 
-            {/* Bottom Page Indicator */}
-            <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0" style={{ fontSize: '8px' }}>
-              <span>The Git Times</span>
-              {profile.hasPageTwo !== false ? (
-                <button
-                  onClick={handleFlipPage}
-                  className="hover:text-ink font-bold flex items-center gap-1 transition-colors"
-                >
-                  <span>{currentPage === 'front' ? 'Page 1 of 2' : 'Page 2 of 2'}</span>
+              {/* Bottom Page 2 Indicator */}
+              <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                <span>The Git Times</span>
+                <button onClick={handleFlipPage} className="hover:text-ink font-bold flex items-center gap-1 transition-colors">
+                  <span>Page 2 of 2</span>
                   <RotateCcw className="w-2.5 h-2.5" />
                 </button>
-              ) : (
-                <span className="font-bold">Page 1 of 1</span>
-              )}
-              <span>{profile.dateStr}</span>
+                <span>{profile.dateStr}</span>
+              </div>
             </div>
           </div>
         </div>

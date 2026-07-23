@@ -502,6 +502,9 @@
 .border-paper-border { border-color: #ba9e74; }
 
 .perspective-1000 { perspective: 1200px; }
+.perspective-1500 { perspective: 1500px; }
+.transform-style-preserve-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
 
 /* ================================================================
    SCROLLBAR
