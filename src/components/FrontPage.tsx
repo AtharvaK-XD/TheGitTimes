@@ -1,6 +1,6 @@
 import React from 'react';
 import type { GitTimesProfile } from '../data/mockProfiles';
-import { Sun, Award, Hash, Star, Users, ExternalLink, UserCheck } from 'lucide-react';
+import { Sun, Award, Hash, Star, Users, ExternalLink, UserCheck, Activity } from 'lucide-react';
 import { audioEngine } from '../services/audioEngine';
 import { ContributionsGrid } from './ContributionsGrid';
 
@@ -251,10 +251,49 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
             </div>
           </section>
 
-          {/* ══════ REAL GITHUB CONTRIBUTIONS HEAT MAP GRID ══════ */}
+          {/* ══════ COMPACT CONTRIBUTION CLIPPING (CLICK TO EXPAND IN LIGHTBOX) ══════ */}
           {profile.contributionsGrid && profile.contributionsGrid.length > 0 && (
-            <div className="newspaper-clipping flex-shrink-0">
-              <ContributionsGrid contributions={profile.contributionsGrid} username={profile.username} />
+            <div
+              onClick={() =>
+                handleClickClipping(
+                  `Annual Contribution Activity Gazette — @${profile.username}`,
+                  '52-Week Telemetry Record',
+                  <ContributionsGrid contributions={profile.contributionsGrid!} username={profile.username} />
+                )
+              }
+              className="newspaper-clipping p-1.5 flex-shrink-0 cursor-pointer hover:bg-amber-100/20 transition-all"
+              style={{ background: 'rgba(230,215,188,0.18)', border: '0.5px solid rgba(26,22,21,0.18)' }}
+              title="Click to expand full 52-week contribution heat map"
+            >
+              <div className="flex items-center justify-between mb-1 pb-0.5 border-b border-ink/20 font-typewriter">
+                <h4 className="text-[8px] font-bold uppercase tracking-[0.1em] text-ink flex items-center gap-1">
+                  <Activity className="w-3 h-3 text-ink-muted flex-shrink-0" />
+                  <span>Contribution Heatmap · 52 Weeks</span>
+                </h4>
+                <span className="text-[7.5px] text-amber-900 font-bold uppercase hover:underline">Expand 🔍</span>
+              </div>
+
+              {/* Compact Mini Heatmap Ribbon */}
+              <div className="flex gap-[1.5px] justify-between items-center py-1 overflow-hidden">
+                {profile.contributionsGrid.filter((_, idx) => idx % 7 === 0).slice(-36).map((day, i) => (
+                  <div
+                    key={i}
+                    className="w-1.5 h-3.5 rounded-[0.5px]"
+                    style={{
+                      backgroundColor:
+                        day.level === 4 ? '#3a2208' :
+                        day.level === 3 ? '#6a4a1c' :
+                        day.level === 2 ? '#9a743a' :
+                        day.level === 1 ? '#cda86c' : 'rgba(180, 150, 110, 0.25)',
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between text-[7.5px] font-typewriter text-ink-muted pt-0.5 border-t border-ink/10">
+                <span className="font-bold text-ink">{profile.statsManifest.totalCommitsYear.toLocaleString()} commits this year</span>
+                <span className="italic text-ink-sepia">Click to inspect full map →</span>
+              </div>
             </div>
           )}
 
