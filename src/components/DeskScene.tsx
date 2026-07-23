@@ -293,23 +293,36 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               }}
             />
 
-            {/* Page Turn Button */}
-            <button
-              onClick={handleFlipPage}
-              disabled={isFlipping}
-              className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
-              style={{
-                background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
-                color: '#d4a84a',
-                border: '1px solid #5c3a18',
-                borderRadius: '3px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,200,100,0.1)',
-              }}
-              title="Flip to next newspaper page"
-            >
-              <BookOpen className="w-3.5 h-3.5" style={{ color: '#d4a84a' }} />
-              <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
-            </button>
+            {/* Page Turn Button — Only rendered if profile has Page 2 */}
+            {profile.hasPageTwo !== false ? (
+              <button
+                onClick={handleFlipPage}
+                disabled={isFlipping}
+                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
+                  color: '#d4a84a',
+                  border: '1px solid #5c3a18',
+                  borderRadius: '3px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,200,100,0.1)',
+                }}
+                title="Flip to next newspaper page"
+              >
+                <BookOpen className="w-3.5 h-3.5" style={{ color: '#d4a84a' }} />
+                <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
+              </button>
+            ) : (
+              <div
+                className="absolute top-3 right-3 z-[30] px-2.5 py-1 font-typewriter text-[9px] uppercase tracking-[0.12em] text-ink-muted opacity-80"
+                style={{
+                  background: 'rgba(230,215,188,0.4)',
+                  border: '0.5px solid rgba(26,22,21,0.2)',
+                  borderRadius: '3px',
+                }}
+              >
+                ★ Complete Single-Page Edition ★
+              </div>
+            )}
 
             {/* ── CONTENT AREA ── */}
             <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
@@ -332,7 +345,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                     <span className="typewriter-cursor">|</span>
                   </div>
                 </div>
-              ) : currentPage === 'front' ? (
+              ) : currentPage === 'front' || profile.hasPageTwo === false ? (
                 <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
               ) : (
                 <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
@@ -342,13 +355,17 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             {/* Bottom Page Indicator */}
             <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0" style={{ fontSize: '8px' }}>
               <span>The Git Times</span>
-              <button
-                onClick={handleFlipPage}
-                className="hover:text-ink font-bold flex items-center gap-1 transition-colors"
-              >
-                <span>{currentPage === 'front' ? 'Page 1 of 2' : 'Page 2 of 2'}</span>
-                <RotateCcw className="w-2.5 h-2.5" />
-              </button>
+              {profile.hasPageTwo !== false ? (
+                <button
+                  onClick={handleFlipPage}
+                  className="hover:text-ink font-bold flex items-center gap-1 transition-colors"
+                >
+                  <span>{currentPage === 'front' ? 'Page 1 of 2' : 'Page 2 of 2'}</span>
+                  <RotateCcw className="w-2.5 h-2.5" />
+                </button>
+              ) : (
+                <span className="font-bold">Page 1 of 1</span>
+              )}
               <span>{profile.dateStr}</span>
             </div>
           </div>
@@ -389,7 +406,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             }}
           >
             <div className="p-3 md:p-7">
-              {currentPage === 'front' ? (
+              {currentPage === 'front' || profile.hasPageTwo === false ? (
                 <FrontPage profile={profile} onInspectClipping={() => {}} />
               ) : (
                 <PageTwo profile={profile} onInspectClipping={() => {}} />

@@ -18,6 +18,7 @@ export interface GitTimesProfile {
   avatarUrl: string;
   joinedDate: string;
   location: string;
+  hasPageTwo?: boolean;
   volumeNo: string;
   issueNo: string;
   dateStr: string;

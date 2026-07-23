@@ -28,93 +28,118 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
     (crosswordAnswers['2_1'] + crosswordAnswers['2_2'] + crosswordAnswers['2_3'] + crosswordAnswers['2_4']) === 'HEAD';
 
   return (
-    <div className="w-full flex flex-col gap-6 text-ink font-body">
-      {/* Header Bar Page 2 */}
-      <div className="border-b-2 border-ink pb-2 flex justify-between items-center font-typewriter text-xs uppercase tracking-wider font-bold">
-        <span>PAGE 2 · SUNDAY SUNDRY & FEATURES</span>
-        <span>THE GIT TIMES GAZETTE</span>
-        <span>ISSUE NO. {profile.issueNo}</span>
-      </div>
+    <div className="w-full flex flex-col select-text text-ink" style={{ fontSize: '13px' }}>
 
-      {/* FEATURE STORY */}
+      {/* ════════════════════════════════════════════════════
+          PAGE 2 HEADER BAR
+          ════════════════════════════════════════════════════ */}
+      <header className="flex-shrink-0 mb-1">
+        <div className="flex items-center justify-between font-typewriter uppercase tracking-[0.12em] text-ink font-bold pb-1"
+          style={{ fontSize: '8px', borderBottom: '1.5px solid #1a1615' }}>
+          <span>PAGE 2 · SUNDAY SUNDRY & FEATURES</span>
+          <span className="hidden sm:inline">THE GIT TIMES GAZETTE</span>
+          <span>ISSUE NO. {profile.issueNo}</span>
+        </div>
+      </header>
+
+      {/* ════════════════════════════════════════════════════
+          FEATURE STORY
+          ════════════════════════════════════════════════════ */}
       <section
         onClick={() =>
           onInspectClipping(
             profile.featureStory.title,
             'Sunday Special Feature',
             <div>
-              <p className="font-typewriter text-xs text-amber-900 font-bold mb-3">{profile.featureStory.author}</p>
+              <p className="font-typewriter text-xs text-ink-muted font-bold mb-3">{profile.featureStory.author}</p>
               {profile.featureStory.content.map((p, idx) => (
-                <p key={idx} className="mb-3 leading-relaxed">{p}</p>
+                <p key={idx} className="mb-3 text-justify leading-relaxed font-body text-base">{p}</p>
               ))}
             </div>
           )
         }
-        className="newspaper-clipping border-b-2 border-ink/40 pb-6"
+        className="newspaper-clipping py-2 flex-shrink-0"
+        style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}
       >
-        <div className="font-typewriter text-xs font-bold text-amber-900 uppercase tracking-widest mb-1">
+        <div className="font-typewriter font-bold text-ink-muted uppercase tracking-[0.15em] mb-0.5" style={{ fontSize: '8px' }}>
           Special Investigative Report
         </div>
-        <h2 className="font-headline text-3xl md:text-4xl font-extrabold uppercase text-ink leading-tight mb-2">
+        <h2 className="font-headline ink-bleed font-black uppercase text-ink leading-[1.05]" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.7rem)' }}>
           {profile.featureStory.title}
         </h2>
-        <div className="font-headline italic text-sm text-stone-700 mb-4">{profile.featureStory.author}</div>
+        <div className="font-headline italic text-ink-sepia mb-2" style={{ fontSize: 'clamp(0.65rem, 1.1vw, 0.8rem)' }}>
+          {profile.featureStory.author}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-justify leading-relaxed">
+        <div className="columns-1 sm:columns-2 gap-5 font-body text-[12px] leading-[1.6] text-justify text-ink" style={{ columnRule: '1px solid rgba(26,22,21,0.12)' }}>
           {profile.featureStory.content.map((para, idx) => (
-            <p key={idx}>{para}</p>
+            <p key={idx} className={idx === 0 ? 'drop-cap mb-2' : 'mb-2'}>{para}</p>
           ))}
         </div>
       </section>
 
-      {/* CROSSWORD + HOROSCOPE */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 border-b-2 border-ink/40 pb-6">
+      {/* Fleuron ornament */}
+      <div className="ornament-divider flex-shrink-0" style={{ fontSize: '9px', padding: '1px 0', letterSpacing: '8px' }}>❧ ❧ ❧</div>
+
+      {/* ════════════════════════════════════════════════════
+          CROSSWORD + HOROSCOPE
+          ════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-0 py-2 flex-shrink-0" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
         {/* Interactive Git Crossword */}
-        <div className="md:col-span-7 border border-ink/40 p-4 bg-amber-50/40">
-          <div className="flex items-center justify-between border-b border-ink/40 pb-2 mb-3">
-            <h4 className="font-typewriter text-xs font-bold uppercase tracking-widest text-ink flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-amber-900" />
+        <div className="md:col-span-7 newspaper-clipping p-2.5 md:pr-4 md:border-r md:border-ink/15 pb-3 md:pb-0"
+          style={{ background: 'rgba(230,215,188,0.2)', border: '0.5px solid rgba(26,22,21,0.15)' }}>
+          <div className="flex items-center justify-between pb-1 mb-2" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
+            <h4 className="font-typewriter text-[10px] font-bold uppercase tracking-[0.12em] text-ink flex items-center gap-1">
+              <HelpCircle className="w-3 h-3 text-ink-muted" />
               <span>Interactive Git Crossword Riddle</span>
             </h4>
             {isCrosswordSolved && (
-              <span className="flex items-center gap-1 font-typewriter text-xs text-emerald-800 font-bold animate-bounce">
-                <CheckCircle className="w-4 h-4 text-emerald-700" /> Solved!
+              <span className="flex items-center gap-1 font-typewriter text-[9px] text-emerald-900 font-bold">
+                <CheckCircle className="w-3 h-3 text-emerald-800" /> Solved!
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {/* Clues */}
-            <div className="font-typewriter text-xs space-y-2">
-              <p className="font-bold text-amber-950">ACROSS CLUES:</p>
-              <p><strong>1.</strong> The Distributed Version Control System created by Linus (3 Letters)</p>
-              <p><strong>2.</strong> The pointer reference to current branch commit tip (4 Letters)</p>
+            <div className="font-typewriter text-[9.5px] space-y-1 text-ink-muted leading-tight">
+              <p className="font-bold text-ink uppercase">ACROSS CLUES:</p>
+              <p><strong>1.</strong> DVCS created by Linus (3 Letters)</p>
+              <p><strong>2.</strong> Pointer to current branch commit tip (4 Letters)</p>
             </div>
 
-            {/* Inputs */}
-            <div className="flex flex-col gap-3 justify-center items-center font-typewriter">
+            {/* Inputs — Aged paper boxes instead of white inputs */}
+            <div className="flex flex-col gap-2 justify-center items-center font-typewriter">
               <div className="flex items-center gap-1">
-                <span className="text-xs font-bold mr-1">1.</span>
+                <span className="text-[9px] font-bold text-ink-muted mr-1">1.</span>
                 {['1_1', '1_2', '1_3'].map((key) => (
                   <input
                     key={key}
                     maxLength={1}
                     value={crosswordAnswers[key] || ''}
                     onChange={(e) => handleCrosswordChange(key, e.target.value)}
-                    className="w-8 h-8 text-center uppercase font-bold border-2 border-ink bg-stone-100 text-stone-900 focus:bg-amber-100 focus:outline-none"
+                    className="w-7 h-7 text-center uppercase font-bold border border-ink/60 text-ink text-xs focus:outline-none transition-colors"
+                    style={{
+                      backgroundColor: crosswordAnswers[key] ? '#e8d8b8' : 'rgba(230,215,188,0.5)',
+                      boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.12)',
+                    }}
                   />
                 ))}
               </div>
 
               <div className="flex items-center gap-1">
-                <span className="text-xs font-bold mr-1">2.</span>
+                <span className="text-[9px] font-bold text-ink-muted mr-1">2.</span>
                 {['2_1', '2_2', '2_3', '2_4'].map((key) => (
                   <input
                     key={key}
                     maxLength={1}
                     value={crosswordAnswers[key] || ''}
                     onChange={(e) => handleCrosswordChange(key, e.target.value)}
-                    className="w-8 h-8 text-center uppercase font-bold border-2 border-ink bg-stone-100 text-stone-900 focus:bg-amber-100 focus:outline-none"
+                    className="w-7 h-7 text-center uppercase font-bold border border-ink/60 text-ink text-xs focus:outline-none transition-colors"
+                    style={{
+                      backgroundColor: crosswordAnswers[key] ? '#e8d8b8' : 'rgba(230,215,188,0.5)',
+                      boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.12)',
+                    }}
                   />
                 ))}
               </div>
@@ -135,29 +160,32 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
               </div>
             )
           }
-          className="md:col-span-5 newspaper-clipping border border-ink/40 p-4 bg-amber-100/30 flex flex-col justify-between"
+          className="md:col-span-5 newspaper-clipping p-2.5 md:pl-4 flex flex-col justify-between"
+          style={{ background: 'rgba(230,215,188,0.15)' }}
         >
           <div>
-            <div className="flex items-center justify-between border-b border-ink/40 pb-1 mb-2">
-              <h4 className="font-typewriter text-xs font-bold uppercase tracking-widest text-ink flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-900" />
+            <div className="flex items-center justify-between pb-1 mb-1.5" style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
+              <h4 className="font-typewriter text-[10px] font-bold uppercase tracking-[0.12em] text-ink flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-ink-muted" />
                 <span>Tech Horoscope & Fortune</span>
               </h4>
             </div>
-            <div className="font-typewriter text-xs space-y-2">
-              <span className="font-extrabold text-amber-950 block">{profile.horoscope.sign}</span>
-              <p className="text-stone-800 leading-relaxed font-serif italic text-sm">
+            <div className="font-typewriter text-[10px] space-y-1">
+              <span className="font-extrabold text-ink uppercase block">{profile.horoscope.sign}</span>
+              <p className="text-ink-muted leading-snug font-serif italic text-xs">
                 "{profile.horoscope.prediction}"
               </p>
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-ink/30 font-typewriter text-[11px] text-amber-900 font-bold">
+          <div className="mt-2 pt-1 font-typewriter text-[9px] text-ink font-bold" style={{ borderTop: '0.5px solid rgba(26,22,21,0.15)' }}>
             Talisman: {profile.horoscope.luckyTool}
           </div>
         </div>
       </div>
 
-      {/* RETRO COMIC STRIP */}
+      {/* ════════════════════════════════════════════════════
+          RETRO COMIC STRIP — SUNDAY FUNNIES
+          ════════════════════════════════════════════════════ */}
       <section
         onClick={() =>
           onInspectClipping(
@@ -169,29 +197,31 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
             </div>
           )
         }
-        className="newspaper-clipping border-2 border-ink p-4 bg-amber-50/60 text-center"
+        className="newspaper-clipping py-2.5 px-2 flex-1 min-h-0 mt-1 flex flex-col justify-between"
+        style={{ borderTop: '1.5px solid #1a1615', borderBottom: '1.5px solid #1a1615', background: 'rgba(230,215,188,0.15)' }}
       >
-        <h4 className="font-typewriter text-xs font-bold uppercase tracking-widest text-ink mb-2">
+        <h4 className="font-typewriter text-[9px] font-bold uppercase tracking-[0.2em] text-ink text-center mb-1.5 pb-0.5"
+          style={{ borderBottom: '0.5px solid rgba(26,22,21,0.2)' }}>
           ★ SUNDAY FUNNIES: THE REBASE PARADOX ★
         </h4>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-typewriter text-xs">
-          <div className="border border-ink p-3 bg-stone-100 flex flex-col justify-between h-28">
-            <span className="font-bold text-stone-800">Panel 1: "Clean History"</span>
-            <p className="text-[11px] text-stone-700 italic">"I'll rebase interactively to keep linear commits!"</p>
-            <span className="text-[9px] text-stone-500">Pick commit a1b2c3</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-typewriter text-[10px]">
+          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
+            <span className="font-bold text-ink uppercase text-[9px]">Panel 1: "Clean History"</span>
+            <p className="text-ink-muted italic my-1 leading-tight" style={{ fontSize: '9.5px' }}>"I'll rebase interactively to keep linear commits!"</p>
+            <span className="text-[8px] text-ink-muted">Pick commit a1b2c3</span>
           </div>
 
-          <div className="border border-ink p-3 bg-stone-100 flex flex-col justify-between h-28">
-            <span className="font-bold text-red-900">Panel 2: "CONFLICT!"</span>
-            <p className="text-[11px] text-red-950 font-extrabold">"CONFLICT (content): Merge conflict in main.rs"</p>
-            <span className="text-[9px] text-stone-500">{'<<<<<<< HEAD'}</span>
+          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
+            <span className="font-bold text-ink uppercase text-[9px]">Panel 2: "CONFLICT!"</span>
+            <p className="text-ink font-extrabold my-1 leading-tight" style={{ fontSize: '9.5px' }}>"CONFLICT (content): Merge conflict in main.rs"</p>
+            <span className="text-[8px] text-ink-muted">{'<<<<<<< HEAD'}</span>
           </div>
 
-          <div className="border border-ink p-3 bg-stone-100 flex flex-col justify-between h-28">
-            <span className="font-bold text-emerald-900">Panel 3: "git push --force"</span>
-            <p className="text-[11px] text-emerald-950 italic">"Problem solved! Production will never know."</p>
-            <span className="text-[9px] text-stone-500">Everything up-to-date</span>
+          <div className="p-2 flex flex-col justify-between" style={{ border: '0.5px solid rgba(26,22,21,0.25)', background: 'rgba(230,215,188,0.3)' }}>
+            <span className="font-bold text-ink uppercase text-[9px]">Panel 3: "git push --force"</span>
+            <p className="text-ink-muted italic my-1 leading-tight" style={{ fontSize: '9.5px' }}>"Problem solved! Production will never know."</p>
+            <span className="text-[8px] text-ink-muted">Everything up-to-date</span>
           </div>
         </div>
       </section>
