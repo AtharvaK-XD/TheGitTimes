@@ -36,21 +36,21 @@ export const PopularRepos: React.FC<PopularReposProps> = ({ repos, username }) =
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => audioEngine.playPaperRustle()}
-                  className="font-extrabold text-[11px] text-ink hover:text-amber-900 underline decoration-ink/40 underline-offset-2 flex items-center gap-1 leading-snug"
+                  className="font-extrabold text-[12.5px] text-ink hover:text-amber-900 underline decoration-ink/40 underline-offset-2 flex items-center gap-1 leading-snug"
                   title={`View ${repo.name} on GitHub`}
                 >
-                  <Code2 className="w-3 h-3 text-ink-muted flex-shrink-0" />
+                  <Code2 className="w-3.5 h-3.5 text-ink-muted flex-shrink-0" />
                   <span>{repo.name}</span>
                 </a>
 
-                <div className="flex items-center gap-1 font-mono text-[9px] font-bold text-ink-muted flex-shrink-0">
-                  <Star className="w-2.5 h-2.5 text-amber-700 fill-amber-700" />
+                <div className="flex items-center gap-1 font-mono text-[10px] font-bold text-ink-muted flex-shrink-0">
+                  <Star className="w-3 h-3 text-amber-700 fill-amber-700" />
                   <span>{repo.stars.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="font-serif italic text-[10px] text-ink-muted leading-tight mb-2 line-clamp-2">
+              <p className="font-serif italic text-[11.5px] text-ink-muted leading-tight mb-2 line-clamp-2">
                 "{repo.description}"
               </p>
             </div>

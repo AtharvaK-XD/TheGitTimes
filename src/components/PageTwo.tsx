@@ -29,7 +29,7 @@ export const PageTwo: React.FC<PageTwoProps> = ({ profile, onInspectClipping }) 
     (crosswordAnswers['2_1'] + crosswordAnswers['2_2'] + crosswordAnswers['2_3'] + crosswordAnswers['2_4']) === 'HEAD';
 
   return (
-    <div className="w-full flex flex-col select-text text-ink" style={{ fontSize: '13px' }}>
+    <div className="w-full flex flex-col select-text text-ink" style={{ fontSize: '14.5px' }}>
 
       {/* ════════════════════════════════════════════════════
           PAGE 2 HEADER BAR

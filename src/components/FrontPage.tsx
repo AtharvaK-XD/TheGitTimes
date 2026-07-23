@@ -22,7 +22,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
   const prsUrl = `https://github.com/pulls?q=is%3Apr+author%3A${profile.username}`;
 
   return (
-    <div className="w-full select-text text-ink flex flex-col" style={{ fontSize: '13px' }}>
+    <div className="w-full select-text text-ink flex flex-col" style={{ fontSize: '14px' }}>
 
       {/* ════════════════════════════════════════════════════
           MASTHEAD
@@ -34,30 +34,30 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
             e.stopPropagation();
             audioEngine.playStampThud();
           }}
-          className="absolute top-1 right-2 hidden sm:block rubber-stamp text-[9px] cursor-pointer"
+          className="absolute top-1 right-2 hidden sm:block rubber-stamp text-[9.5px] cursor-pointer"
           title="Click to verify stamp"
         >
           <span>✓ VERIFIED DISPATCH</span>
         </div>
 
         <div className="flex items-center justify-between font-body uppercase tracking-[0.18em] text-ink-muted pb-0.5"
-          style={{ fontSize: '7.5px', borderBottom: '0.5px solid rgba(26,22,21,0.25)' }}>
+          style={{ fontSize: '8.5px', borderBottom: '0.5px solid rgba(26,22,21,0.25)' }}>
           <span>{profile.location}</span>
-          <span className="hidden md:inline font-typewriter tracking-[0.25em]" style={{ fontSize: '6.5px' }}>★ THE LEADING DAILY OF THE CODING REPUBLIC ★</span>
+          <span className="hidden md:inline font-typewriter tracking-[0.25em]" style={{ fontSize: '7.5px' }}>★ THE LEADING DAILY OF THE CODING REPUBLIC ★</span>
           <span>EST. MMVIII</span>
         </div>
         <div className="rule-double my-0.5" style={{ height: '2px' }} />
-        <h1 className="font-masthead ink-bleed uppercase leading-none py-0.5" style={{ fontSize: 'clamp(1.3rem, 2.8vw, 2.2rem)', letterSpacing: '0.05em' }}>
+        <h1 className="font-masthead ink-bleed uppercase leading-none py-0.5" style={{ fontSize: 'clamp(1.4rem, 3.2vw, 2.4rem)', letterSpacing: '0.05em' }}>
           The Git Times
         </h1>
-        <p className="font-headline italic text-ink-sepia -mt-0.5 mb-0.5 font-semibold" style={{ fontSize: 'clamp(0.5rem, 0.9vw, 0.65rem)', letterSpacing: '0.12em' }}>
+        <p className="font-headline italic text-ink-sepia -mt-0.5 mb-0.5 font-semibold" style={{ fontSize: 'clamp(0.55rem, 1.0vw, 0.72rem)', letterSpacing: '0.12em' }}>
           "All the Commits Fit to Print"
         </p>
         <div className="rule-double my-0.5" style={{ height: '2px' }} />
         <div className="py-0.5 flex flex-wrap items-center justify-between font-typewriter uppercase tracking-[0.08em] text-ink font-bold"
-          style={{ fontSize: '7.5px', borderBottom: '1.5px solid #1a1615' }}>
+          style={{ fontSize: '8.5px', borderBottom: '1.5px solid #1a1615' }}>
           <span>VOL. {profile.volumeNo}, NO. {profile.issueNo}</span>
-          <span className="flex items-center gap-1"><span style={{ fontSize: '4.5px' }}>✦</span> PRICE: TWO PULL REQUESTS <span style={{ fontSize: '4.5px' }}>✦</span></span>
+          <span className="flex items-center gap-1"><span style={{ fontSize: '5px' }}>✦</span> PRICE: TWO PULL REQUESTS <span style={{ fontSize: '5px' }}>✦</span></span>
           <span>{profile.dateStr}</span>
         </div>
       </header>
@@ -141,7 +141,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
             )}
             className="newspaper-clipping flex-1 min-h-0 overflow-hidden"
           >
-            <div className="font-body text-justify text-ink leading-[1.55]" style={{ fontSize: '11.5px' }}>
+            <div className="font-body text-justify text-ink leading-[1.55]" style={{ fontSize: '12.8px' }}>
               <p className="drop-cap mb-1">{profile.bioArticle[0]}</p>
               <p className="line-clamp-4">{profile.bioArticle[1]}</p>
             </div>
