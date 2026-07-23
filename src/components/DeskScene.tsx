@@ -59,15 +59,13 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
   isLoading,
 }) => {
   const [currentPage, setCurrentPage] = useState<'front' | 'two'>('front');
-  const [flipDirection, setFlipDirection] = useState<'to-two' | 'to-front'>('to-two');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [clientPos, setClientPos] = useState({ x: 0, y: 0 });
   const [smoothMouse, setSmoothMouse] = useState({ x: 0, y: 0 });
-  const [isFlipping, setIsFlipping] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoupeActive, setIsLoupeActive] = useState(false);
   const [paperRelPos, setPaperRelPos] = useState({ x: 0, y: 0, width: 1140, height: 800 });
-  
+
   const paperRef = useRef<HTMLDivElement>(null);
 
   const [clippingModal, setClippingModal] = useState<{
@@ -120,25 +118,12 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [mousePos]);
 
-  // Real 3D Center-Fold Broadside Page Flip Handler
+  // Simple page swap handler
   const handleFlipPage = useCallback(() => {
-    if (isFlipping || profile.hasPageTwo === false) return;
+    if (profile.hasPageTwo === false) return;
     audioEngine.playPaperRustle();
-    
-    const nextDir = currentPage === 'front' ? 'to-two' : 'to-front';
-    setFlipDirection(nextDir);
-    setIsFlipping(true);
-
-    // Swap underlying page content mid-way through 3D peel animation (at 300ms)
-    setTimeout(() => {
-      setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
-    }, 300);
-
-    // Complete flip animation state at 650ms
-    setTimeout(() => {
-      setIsFlipping(false);
-    }, 650);
-  }, [isFlipping, currentPage, profile.hasPageTwo]);
+    setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
+  }, [profile.hasPageTwo]);
 
   const handleInspectClipping = useCallback((title: string, category: string, content: React.ReactNode) => {
     setClippingModal({ isOpen: true, title, category, content });
@@ -293,8 +278,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             {profile.hasPageTwo !== false ? (
               <button
                 onClick={handleFlipPage}
-                disabled={isFlipping}
-                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer shadow-lg"
+                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
                 style={{
                   background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
                   color: '#d4a84a',
@@ -317,31 +301,6 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                 }}
               >
                 ★ Complete Single-Page Edition ★
-              </div>
-            )}
-
-            {/* ── REAL 3D PEELING PAPER OVERLAY LEAF ── */}
-            {isFlipping && (
-              <div className="absolute inset-0 pointer-events-none z-[45] overflow-hidden" style={{ perspective: '1500px' }}>
-                <div
-                  className={`w-full h-full paper-texture deckled-paper coffee-stain ${
-                    flipDirection === 'to-two' ? 'animate-paper-peel-right-to-left' : 'animate-paper-peel-left-to-right'
-                  }`}
-                  style={{
-                    boxShadow: '0 20px 50px rgba(0,0,0,0.75)',
-                  }}
-                >
-                  <div className="paper-aged-overlay" />
-                  <div className="paper-creases" />
-                  {/* Dynamic fold light shadow sweep */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(160,110,40,0.2) 50%, rgba(0,0,0,0.5) 100%)',
-                      mixBlendMode: 'multiply',
-                    }}
-                  />
-                </div>
               </div>
             )}
 
