@@ -13,7 +13,6 @@ export function App() {
     ...MOCK_PROFILES.octocat,
     hasPageTwo: true,
   });
-  const [history, setHistory] = useState<GitTimesProfile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -29,7 +28,6 @@ export function App() {
       // 2. Generate vintage 1920s newspaper copy via Gemini API + compute page count
       const newProfile = await generateNewspaperProfile(rawGitHubData);
 
-      setHistory((prev) => [...prev, activeProfile]);
       setActiveProfile(newProfile);
       setHasSearched(true);
       setIsLoading(false);
@@ -44,13 +42,8 @@ export function App() {
 
   const handleBack = () => {
     audioEngine.playPaperRustle();
-    if (history.length > 0) {
-      const prevProfile = history[history.length - 1];
-      setHistory((prev) => prev.slice(0, prev.length - 1));
-      setActiveProfile(prevProfile);
-    } else {
-      setHasSearched(false);
-    }
+    setErrorMessage(null);
+    setHasSearched(false);
   };
 
   return (
