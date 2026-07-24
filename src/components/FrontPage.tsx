@@ -434,21 +434,6 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
                 </div>
               ))}
             </div>
-
-            {/* 3D Wax Seal Emblem */}
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                audioEngine.playStampThud();
-              }}
-              className="wax-seal absolute bottom-1 right-2 hidden sm:flex items-center justify-center text-center select-none"
-              title="Official Gazette Wax Seal (Click for stamp thud)"
-            >
-              <div className="text-[7px] font-masthead text-amber-200 uppercase leading-none tracking-tighter">
-                <span>GIT</span>
-                <span className="block font-sans text-[5px] text-amber-300/80">★ MMVIII ★</span>
-              </div>
-            </div>
           </footer>
         </div>
       </div>
