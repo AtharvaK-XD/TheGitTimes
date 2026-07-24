@@ -118,22 +118,29 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [mousePos]);
 
-  const [isPageSwapping, setIsPageSwapping] = useState(false);
+  const [flipState, setFlipState] = useState<'idle' | 'out' | 'in'>('idle');
+  const [flipDirection, setFlipDirection] = useState<'next' | 'prev'>('next');
 
-  // Smooth vintage newspaper page swap handler
+  // Ultra smooth 3D broadsheet newspaper page flip handler
   const handleFlipPage = useCallback(() => {
-    if (profile.hasPageTwo === false || isPageSwapping) return;
-    audioEngine.playPaperRustle();
-    setIsPageSwapping(true);
+    if (profile.hasPageTwo === false || flipState !== 'idle') return;
 
+    const nextDir = currentPage === 'front' ? 'next' : 'prev';
+    setFlipDirection(nextDir);
+    setFlipState('out');
+    audioEngine.playPaperRustle();
+
+    // Switch page content at halfway point of 3D page fold (220ms)
     setTimeout(() => {
       setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
-    }, 150);
+      setFlipState('in');
+    }, 220);
 
+    // Reset flip state after animation finishes (460ms total)
     setTimeout(() => {
-      setIsPageSwapping(false);
-    }, 400);
-  }, [profile.hasPageTwo, isPageSwapping]);
+      setFlipState('idle');
+    }, 460);
+  }, [profile.hasPageTwo, flipState, currentPage]);
 
   const handleInspectClipping = useCallback((title: string, category: string, content: React.ReactNode) => {
     setClippingModal({ isOpen: true, title, category, content });
@@ -288,7 +295,10 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
             {profile.hasPageTwo !== false ? (
               <button
                 onClick={handleFlipPage}
-                className="absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
+                disabled={flipState !== 'idle'}
+                className={`absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${
+                  flipState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 style={{
                   background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
                   color: '#d4a84a',
@@ -296,9 +306,9 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                   borderRadius: '3px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
                 }}
-                title="Flip to next newspaper page"
+                title={currentPage === 'front' ? 'Turn to Page 2 (3D Page Flip)' : 'Return to Front Page (3D Page Flip)'}
               >
-                <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                <BookOpen className={`w-3.5 h-3.5 text-amber-400 ${flipState !== 'idle' ? 'animate-spin' : ''}`} />
                 <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
               </button>
             ) : (
@@ -314,40 +324,74 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               </div>
             )}
 
-            {/* ── STATIONARY CONTENT AREA WITH VINTAGE PAGE SWAP ANIMATION ── */}
-            <div className={`relative z-[10] flex-1 min-h-0 flex flex-col ${isPageSwapping ? 'animate-newspaper-swap' : ''}`}>
-              {isLoading ? (
-                <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                  <div className="relative w-24 h-24 mx-auto">
-                    <div className="ink-blot absolute inset-0" />
-                    <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
-                    <div className="ink-blot absolute inset-4" style={{ animationDelay: '1s' }} />
+            {/* ── 3D BROADSHEET NEWSPAPER PAGE CONTENT WRAPPER ── */}
+            <div className="paper-flip-container relative z-[10] flex-1 min-h-0 flex flex-col">
+              {/* Dynamic Paper Crease & Lighting Glare Sweep during page flip */}
+              {flipState !== 'idle' && <div className="paper-crease-glare" />}
+
+              <div
+                className={`flex-1 flex flex-col min-h-0 ${
+                  flipState === 'out'
+                    ? flipDirection === 'next'
+                      ? 'animate-page-flip-out-next'
+                      : 'animate-page-flip-out-prev'
+                    : flipState === 'in'
+                    ? flipDirection === 'next'
+                      ? 'animate-page-flip-in-next'
+                      : 'animate-page-flip-in-prev'
+                    : ''
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+                    <div className="relative w-24 h-24 mx-auto">
+                      <div className="ink-blot absolute inset-0" />
+                      <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
+                      <div className="ink-blot absolute inset-4" style={{ animationDelay: '1s' }} />
+                    </div>
+                    <h3 className="font-typewriter text-xl text-ink-muted font-bold uppercase tracking-[0.2em]">
+                      Typesetting Edition
+                    </h3>
+                    <p className="font-body italic text-base text-ink-sepia">
+                      Composing dispatch for <strong>@{profile.username}</strong> ...
+                    </p>
+                    <div className="flex justify-center items-center gap-1 font-typewriter text-sm text-ink-muted">
+                      <span>■</span>
+                      <span className="typewriter-cursor">|</span>
+                    </div>
                   </div>
-                  <h3 className="font-typewriter text-xl text-ink-muted font-bold uppercase tracking-[0.2em]">
-                    Typesetting Edition
-                  </h3>
-                  <p className="font-body italic text-base text-ink-sepia">
-                    Composing dispatch for <strong>@{profile.username}</strong> ...
-                  </p>
-                  <div className="flex justify-center items-center gap-1 font-typewriter text-sm text-ink-muted">
-                    <span>■</span>
-                    <span className="typewriter-cursor">|</span>
-                  </div>
-                </div>
-              ) : currentPage === 'front' || profile.hasPageTwo === false ? (
-                <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
-              ) : (
-                <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
-              )}
+                ) : currentPage === 'front' || profile.hasPageTwo === false ? (
+                  <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
+                ) : (
+                  <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
+                )}
+              </div>
             </div>
+
+            {/* Interactive Vintage Dog-Ear Fold Corner Peel */}
+            {profile.hasPageTwo !== false && !isLoading && (
+              <div
+                onClick={handleFlipPage}
+                className="newspaper-dog-ear group"
+                title={currentPage === 'front' ? 'Peel or click to turn to Page 2' : 'Peel or click to return to Front Page'}
+              >
+                <span className="absolute -top-7 -left-7 font-typewriter text-[7.5px] font-bold text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity select-none whitespace-nowrap drop-shadow-md">
+                  {currentPage === 'front' ? 'P. 2 ↗' : 'P. 1 ↖'}
+                </span>
+              </div>
+            )}
 
             {/* Bottom Page Indicator */}
             <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
               <span>The Git Times</span>
               {profile.hasPageTwo !== false ? (
-                <button onClick={handleFlipPage} className="hover:text-ink font-bold flex items-center gap-1 transition-colors">
+                <button
+                  onClick={handleFlipPage}
+                  disabled={flipState !== 'idle'}
+                  className="hover:text-ink font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                >
                   <span>{currentPage === 'front' ? 'Page 1 of 2' : 'Page 2 of 2'}</span>
-                  <RotateCcw className="w-2.5 h-2.5" />
+                  <RotateCcw className={`w-2.5 h-2.5 ${flipState !== 'idle' ? 'animate-spin' : ''}`} />
                 </button>
               ) : (
                 <span className="font-bold">Page 1 of 1</span>

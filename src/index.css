@@ -585,26 +585,179 @@
   border-color: rgba(65, 40, 15, 0.6) !important;
 }
 
-/* Vintage Newspaper Page Transition */
-@keyframes newspaperPageSwap {
+/* ════════════════════════════════════════════════════════════════
+   3D REALISTIC NEWSPAPER PAGE FLIP TRANSITIONS & CREASE SHADOWS
+   ════════════════════════════════════════════════════════════════ */
+
+.paper-flip-container {
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+/* Page 1 -> Page 2 (Next Page) Outgoing Phase: Folds off left spine */
+@keyframes pageFlipOutNext {
   0% {
-    opacity: 0.2;
-    transform: translateY(8px) scale(0.985);
-    filter: blur(1.5px);
+    transform: rotateY(0deg) scale(1) translateZ(0);
+    opacity: 1;
+    filter: brightness(1) contrast(1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
   50% {
-    opacity: 0.75;
-    transform: translateY(-2px) scale(1.003);
-    filter: blur(0.4px);
+    filter: brightness(0.82) contrast(1.12);
+    box-shadow: -18px 14px 40px rgba(0, 0, 0, 0.55);
   }
   100% {
-    opacity: 1;
-    transform: translateY(0px) scale(1);
-    filter: blur(0px);
+    transform: rotateY(-84deg) scale(0.94) translateX(-30px) translateZ(-50px);
+    opacity: 0.05;
+    filter: brightness(0.65) blur(1.5px);
+    box-shadow: -35px 20px 50px rgba(0, 0, 0, 0.7);
   }
 }
 
-.animate-newspaper-swap {
-  animation: newspaperPageSwap 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+/* Page 1 -> Page 2 (Next Page) Incoming Phase: Unfolds from right spine */
+@keyframes pageFlipInNext {
+  0% {
+    transform: rotateY(84deg) scale(0.94) translateX(30px) translateZ(-50px);
+    opacity: 0.05;
+    filter: brightness(1.25) blur(1.5px);
+    box-shadow: 25px 20px 50px rgba(0, 0, 0, 0.7);
+  }
+  60% {
+    filter: brightness(1.06) contrast(1.02);
+  }
+  100% {
+    transform: rotateY(0deg) scale(1) translateX(0) translateZ(0);
+    opacity: 1;
+    filter: brightness(1) contrast(1) blur(0px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
 }
+
+/* Page 2 -> Page 1 (Previous Page) Outgoing Phase: Folds off right spine */
+@keyframes pageFlipOutPrev {
+  0% {
+    transform: rotateY(0deg) scale(1) translateZ(0);
+    opacity: 1;
+    filter: brightness(1) contrast(1);
+  }
+  50% {
+    filter: brightness(0.82) contrast(1.12);
+  }
+  100% {
+    transform: rotateY(84deg) scale(0.94) translateX(30px) translateZ(-50px);
+    opacity: 0.05;
+    filter: brightness(0.65) blur(1.5px);
+  }
+}
+
+/* Page 2 -> Page 1 (Previous Page) Incoming Phase: Unfolds from left spine */
+@keyframes pageFlipInPrev {
+  0% {
+    transform: rotateY(-84deg) scale(0.94) translateX(-30px) translateZ(-50px);
+    opacity: 0.05;
+    filter: brightness(1.25) blur(1.5px);
+  }
+  60% {
+    filter: brightness(1.06);
+  }
+  100% {
+    transform: rotateY(0deg) scale(1) translateX(0) translateZ(0);
+    opacity: 1;
+    filter: brightness(1) blur(0px);
+  }
+}
+
+.animate-page-flip-out-next {
+  animation: pageFlipOutNext 0.22s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  transform-origin: left center;
+}
+
+.animate-page-flip-in-next {
+  animation: pageFlipInNext 0.24s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+  transform-origin: right center;
+}
+
+.animate-page-flip-out-prev {
+  animation: pageFlipOutPrev 0.22s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  transform-origin: right center;
+}
+
+.animate-page-flip-in-prev {
+  animation: pageFlipInPrev 0.24s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+  transform-origin: left center;
+}
+
+/* Dynamic Paper Crease Lighting & Shadow Glare Overlay */
+@keyframes creaseLightingSweep {
+  0% {
+    opacity: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(255,230,170,0.3) 25%, transparent 70%);
+  }
+  50% {
+    opacity: 0.85;
+    background: linear-gradient(90deg, rgba(0,0,0,0.6) 10%, rgba(255,230,170,0.5) 50%, rgba(0,0,0,0.35) 90%);
+  }
+  100% {
+    opacity: 0;
+    background: linear-gradient(90deg, transparent 30%, rgba(255,230,170,0.2) 75%, rgba(0,0,0,0.3) 100%);
+  }
+}
+
+.paper-crease-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 35;
+  border-radius: inherit;
+  animation: creaseLightingSweep 0.45s ease-in-out forwards;
+}
+
+/* Legacy fallback */
+.animate-newspaper-swap {
+  animation: pageFlipInNext 0.38s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INTERACTIVE NEWSPAPER DOG-EAR PAGE CORNER PEEL
+   ════════════════════════════════════════════════════════════════ */
+
+.newspaper-dog-ear {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 38px 38px;
+  border-color: transparent transparent #221407 transparent;
+  filter: drop-shadow(-4px -4px 6px rgba(0, 0, 0, 0.45));
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  z-index: 32;
+}
+
+.newspaper-dog-ear::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  right: -38px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 36px 36px 0 0;
+  border-color: #d4bf96 transparent transparent transparent;
+  box-shadow: inset -1px 1px 2px rgba(255,255,255,0.4);
+}
+
+.newspaper-dog-ear:hover {
+  border-width: 0 0 54px 54px;
+  filter: drop-shadow(-7px -7px 12px rgba(0, 0, 0, 0.6));
+}
+
+.newspaper-dog-ear:hover::after {
+  border-width: 52px 52px 0 0;
+}
+
 
