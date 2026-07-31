@@ -118,29 +118,21 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
     return () => cancelAnimationFrame(rafId);
   }, [mousePos]);
 
-  const [flipState, setFlipState] = useState<'idle' | 'out' | 'in'>('idle');
-  const [flipDirection, setFlipDirection] = useState<'next' | 'prev'>('next');
+  const [isFlipping, setIsFlipping] = useState(false);
 
-  // Ultra smooth 3D broadsheet newspaper page flip handler
+  // Ultra smooth 3D broadsheet newspaper flashcard flip handler
   const handleFlipPage = useCallback(() => {
-    if (profile.hasPageTwo === false || flipState !== 'idle') return;
+    if (profile.hasPageTwo === false || isFlipping) return;
 
-    const nextDir = currentPage === 'front' ? 'next' : 'prev';
-    setFlipDirection(nextDir);
-    setFlipState('out');
+    setIsFlipping(true);
     audioEngine.playPaperRustle();
 
-    // Switch page content at halfway point of 3D page fold (220ms)
-    setTimeout(() => {
-      setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
-      setFlipState('in');
-    }, 220);
+    setCurrentPage(prev => (prev === 'front' ? 'two' : 'front'));
 
-    // Reset flip state after animation finishes (460ms total)
     setTimeout(() => {
-      setFlipState('idle');
-    }, 460);
-  }, [profile.hasPageTwo, flipState, currentPage]);
+      setIsFlipping(false);
+    }, 750);
+  }, [profile.hasPageTwo, isFlipping]);
 
   const handleInspectClipping = useCallback((title: string, category: string, content: React.ReactNode) => {
     setClippingModal({ isOpen: true, title, category, content });
@@ -254,94 +246,88 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
       <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1500 my-auto px-3 sm:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
-          className="paper-idle-sway h-full"
+          className="paper-idle-sway h-full w-full flashcard-wrapper"
           style={{
             transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(8px)`,
             transformStyle: 'preserve-3d',
             transition: 'transform 0.15s linear',
           }}
         >
-          {/* Main Stationary Paper Sheet Container */}
+          {/* 3D FLASHCARD FLIPPING CARD CONTAINER */}
           <div
             ref={paperRef}
-            className="relative w-full h-full paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
+            className={`flashcard-inner ${isFlipping ? 'is-flipping' : ''}`}
             style={{
-              boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-              padding: 'clamp(12px, 2vw, 24px)',
+              transform: `rotateY(${currentPage === 'two' ? 180 : 0}deg)`,
             }}
           >
-            {/* Aged discoloration overlay */}
-            <div className="paper-aged-overlay" />
-            <div className="paper-creases" />
-
-            {/* Foxing spots */}
-            <div className="foxing-spots">
-              {foxingSpots.map((spot, i) => (
-                <div key={i} className="foxing-spot"
-                  style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
-              ))}
-            </div>
-
-            {/* Corner curl */}
-            <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-[5]"
+            {/* ════════════════════════════════════════════════════
+                FRONT FACE (PAGE 1) - FULL YELLOW NEWSPAPER SHEET
+                ════════════════════════════════════════════════════ */}
+            <div
+              className="flashcard-face flashcard-front paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
               style={{
-                background: 'linear-gradient(225deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
-                clipPath: 'polygon(100% 0, 30% 0, 100% 70%)',
-                boxShadow: 'inset -2px 2px 4px rgba(0,0,0,0.08)',
+                boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
+                padding: 'clamp(12px, 2vw, 24px)',
+                pointerEvents: currentPage === 'front' ? 'auto' : 'none',
               }}
-            />
+            >
+              {/* Aged discoloration overlay */}
+              <div className="paper-aged-overlay" />
+              <div className="paper-creases" />
 
-            {/* Page Turn Button */}
-            {profile.hasPageTwo !== false ? (
-              <button
-                onClick={handleFlipPage}
-                disabled={flipState !== 'idle'}
-                className={`absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${
-                  flipState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                style={{
-                  background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
-                  color: '#d4a84a',
-                  border: '1px solid #5c3a18',
-                  borderRadius: '3px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
-                }}
-                title={currentPage === 'front' ? 'Turn to Page 2 (3D Page Flip)' : 'Return to Front Page (3D Page Flip)'}
-              >
-                <BookOpen className={`w-3.5 h-3.5 text-amber-400 ${flipState !== 'idle' ? 'animate-spin' : ''}`} />
-                <span>{currentPage === 'front' ? 'Turn to Page 2 →' : '← Return to Front Page'}</span>
-              </button>
-            ) : (
-              <div
-                className="absolute top-3 right-3 z-[30] px-2.5 py-1 font-typewriter text-[9px] uppercase tracking-[0.12em] text-ink-muted opacity-80"
-                style={{
-                  background: 'rgba(230,215,188,0.4)',
-                  border: '0.5px solid rgba(26,22,21,0.2)',
-                  borderRadius: '3px',
-                }}
-              >
-                ★ Complete Single-Page Edition ★
+              {/* Foxing spots */}
+              <div className="foxing-spots">
+                {foxingSpots.map((spot, i) => (
+                  <div key={i} className="foxing-spot"
+                    style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
+                ))}
               </div>
-            )}
 
-            {/* ── 3D BROADSHEET NEWSPAPER PAGE CONTENT WRAPPER ── */}
-            <div className="paper-flip-container relative z-[10] flex-1 min-h-0 flex flex-col">
-              {/* Dynamic Paper Crease & Lighting Glare Sweep during page flip */}
-              {flipState !== 'idle' && <div className="paper-crease-glare" />}
+              {/* Corner curl */}
+              <div className="absolute top-0 right-0 w-16 h-16 pointer-events-none z-[5]"
+                style={{
+                  background: 'linear-gradient(225deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
+                  clipPath: 'polygon(100% 0, 30% 0, 100% 70%)',
+                  boxShadow: 'inset -2px 2px 4px rgba(0,0,0,0.08)',
+                }}
+              />
 
-              <div
-                className={`flex-1 flex flex-col min-h-0 ${
-                  flipState === 'out'
-                    ? flipDirection === 'next'
-                      ? 'animate-page-flip-out-next'
-                      : 'animate-page-flip-out-prev'
-                    : flipState === 'in'
-                    ? flipDirection === 'next'
-                      ? 'animate-page-flip-in-next'
-                      : 'animate-page-flip-in-prev'
-                    : ''
-                }`}
-              >
+              {/* Page Turn Button (Front) */}
+              {profile.hasPageTwo !== false ? (
+                <button
+                  onClick={handleFlipPage}
+                  disabled={isFlipping}
+                  className={`absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${
+                    isFlipping ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  style={{
+                    background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
+                    color: '#d4a84a',
+                    border: '1px solid #5c3a18',
+                    borderRadius: '3px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
+                  }}
+                  title="Turn to Page 2 (3D Flashcard Flip)"
+                >
+                  <BookOpen className={`w-3.5 h-3.5 text-amber-400 ${isFlipping ? 'animate-spin' : ''}`} />
+                  <span>Turn to Page 2 →</span>
+                </button>
+              ) : (
+                <div
+                  className="absolute top-3 right-3 z-[30] px-2.5 py-1 font-typewriter text-[9px] uppercase tracking-[0.12em] text-ink-muted opacity-80"
+                  style={{
+                    background: 'rgba(230,215,188,0.4)',
+                    border: '0.5px solid rgba(26,22,21,0.2)',
+                    borderRadius: '3px',
+                  }}
+                >
+                  ★ Complete Single-Page Edition ★
+                </div>
+              )}
+
+              {/* Front Page Content */}
+              <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
                 {isLoading ? (
                   <div className="flex-1 flex flex-col items-center justify-center space-y-6">
                     <div className="relative w-24 h-24 mx-auto">
@@ -360,44 +346,149 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                       <span className="typewriter-cursor">|</span>
                     </div>
                   </div>
-                ) : currentPage === 'front' || profile.hasPageTwo === false ? (
-                  <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
                 ) : (
-                  <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
+                  <FrontPage profile={profile} onInspectClipping={handleInspectClipping} />
                 )}
               </div>
+
+              {/* Interactive Corner Peel Dog-Ear (Front: Bottom Right) */}
+              {profile.hasPageTwo !== false && !isLoading && (
+                <div
+                  onClick={handleFlipPage}
+                  className="newspaper-dog-ear group"
+                  title="Peel or click to turn to Page 2"
+                >
+                  <span className="absolute -top-7 -left-7 font-typewriter text-[7.5px] font-bold text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity select-none whitespace-nowrap drop-shadow-md">
+                    P. 2 ↗
+                  </span>
+                </div>
+              )}
+
+              {/* Bottom Page Indicator (Front) */}
+              <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                <span>The Git Times</span>
+                {profile.hasPageTwo !== false ? (
+                  <button
+                    onClick={handleFlipPage}
+                    disabled={isFlipping}
+                    className="hover:text-ink font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <span>Page 1 of 2</span>
+                    <RotateCcw className={`w-2.5 h-2.5 ${isFlipping ? 'animate-spin' : ''}`} />
+                  </button>
+                ) : (
+                  <span className="font-bold">Page 1 of 1</span>
+                )}
+                <span>{profile.dateStr}</span>
+              </div>
             </div>
 
-            {/* Interactive Vintage Dog-Ear Fold Corner Peel */}
-            {profile.hasPageTwo !== false && !isLoading && (
+            {/* ════════════════════════════════════════════════════
+                BACK FACE (PAGE 2) - FULL YELLOW NEWSPAPER SHEET
+                ════════════════════════════════════════════════════ */}
+            {profile.hasPageTwo !== false && (
               <div
-                onClick={handleFlipPage}
-                className="newspaper-dog-ear group"
-                title={currentPage === 'front' ? 'Peel or click to turn to Page 2' : 'Peel or click to return to Front Page'}
+                className="flashcard-face flashcard-back paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
+                style={{
+                  boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
+                  padding: 'clamp(12px, 2vw, 24px)',
+                  pointerEvents: currentPage === 'two' ? 'auto' : 'none',
+                }}
               >
-                <span className="absolute -top-7 -left-7 font-typewriter text-[7.5px] font-bold text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity select-none whitespace-nowrap drop-shadow-md">
-                  {currentPage === 'front' ? 'P. 2 ↗' : 'P. 1 ↖'}
-                </span>
-              </div>
-            )}
+                {/* Aged discoloration overlay */}
+                <div className="paper-aged-overlay" />
+                <div className="paper-creases" />
 
-            {/* Bottom Page Indicator */}
-            <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
-              <span>The Git Times</span>
-              {profile.hasPageTwo !== false ? (
+                {/* Foxing spots */}
+                <div className="foxing-spots">
+                  {foxingSpots.map((spot, i) => (
+                    <div key={i} className="foxing-spot"
+                      style={{ ...spot, width: `${spot.width}px`, height: `${spot.height}px` }} />
+                  ))}
+                </div>
+
+                {/* Corner curl */}
+                <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none z-[5]"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(180, 160, 120, 0.3) 0%, rgba(220, 200, 160, 0.15) 30%, transparent 50%)',
+                    clipPath: 'polygon(0 0, 70% 0, 0 70%)',
+                    boxShadow: 'inset 2px 2px 4px rgba(0,0,0,0.08)',
+                  }}
+                />
+
+                {/* Return Page Button (Back) */}
                 <button
                   onClick={handleFlipPage}
-                  disabled={flipState !== 'idle'}
-                  className="hover:text-ink font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  disabled={isFlipping}
+                  className={`absolute top-3 right-3 z-[30] px-3 py-1.5 font-typewriter text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all transform hover:scale-105 active:scale-95 cursor-pointer shadow-lg ${
+                    isFlipping ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  style={{
+                    background: 'linear-gradient(to bottom, #3d2510, #2a1a0c)',
+                    color: '#d4a84a',
+                    border: '1px solid #5c3a18',
+                    borderRadius: '3px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,200,100,0.1)',
+                  }}
+                  title="Return to Front Page (3D Flashcard Flip)"
                 >
-                  <span>{currentPage === 'front' ? 'Page 1 of 2' : 'Page 2 of 2'}</span>
-                  <RotateCcw className={`w-2.5 h-2.5 ${flipState !== 'idle' ? 'animate-spin' : ''}`} />
+                  <BookOpen className={`w-3.5 h-3.5 text-amber-400 ${isFlipping ? 'animate-spin' : ''}`} />
+                  <span>← Return to Front Page</span>
                 </button>
-              ) : (
-                <span className="font-bold">Page 1 of 1</span>
-              )}
-              <span>{profile.dateStr}</span>
-            </div>
+
+                {/* Page Two Content */}
+                <div className="relative z-[10] flex-1 min-h-0 flex flex-col">
+                  {isLoading ? (
+                    <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+                      <div className="relative w-24 h-24 mx-auto">
+                        <div className="ink-blot absolute inset-0" />
+                        <div className="ink-blot absolute inset-2" style={{ animationDelay: '0.5s' }} />
+                        <div className="ink-blot absolute inset-4" style={{ animationDelay: '1s' }} />
+                      </div>
+                      <h3 className="font-typewriter text-xl text-ink-muted font-bold uppercase tracking-[0.2em]">
+                        Typesetting Edition
+                      </h3>
+                      <p className="font-body italic text-base text-ink-sepia">
+                        Composing dispatch for <strong>@{profile.username}</strong> ...
+                      </p>
+                      <div className="flex justify-center items-center gap-1 font-typewriter text-sm text-ink-muted">
+                        <span>■</span>
+                        <span className="typewriter-cursor">|</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <PageTwo profile={profile} onInspectClipping={handleInspectClipping} />
+                  )}
+                </div>
+
+                {/* Interactive Corner Peel Dog-Ear (Back: Bottom Left) */}
+                {!isLoading && (
+                  <div
+                    onClick={handleFlipPage}
+                    className="newspaper-dog-ear-left group"
+                    title="Peel or click to return to Front Page"
+                  >
+                    <span className="absolute -top-7 -right-7 font-typewriter text-[7.5px] font-bold text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity select-none whitespace-nowrap drop-shadow-md">
+                      P. 1 ↖
+                    </span>
+                  </div>
+                )}
+
+                {/* Bottom Page Indicator (Back) */}
+                <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                  <span>The Git Times</span>
+                  <button
+                    onClick={handleFlipPage}
+                    disabled={isFlipping}
+                    className="hover:text-ink font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <span>Page 2 of 2</span>
+                    <RotateCcw className={`w-2.5 h-2.5 ${isFlipping ? 'animate-spin' : ''}`} />
+                  </button>
+                  <span>{profile.dateStr}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>

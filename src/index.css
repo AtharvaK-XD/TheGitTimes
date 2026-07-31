@@ -760,4 +760,79 @@
   border-width: 52px 52px 0 0;
 }
 
+/* Left Bottom Corner Dog Ear (For Back Page) */
+.newspaper-dog-ear-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 38px 38px 0;
+  border-color: transparent #221407 transparent transparent;
+  filter: drop-shadow(4px -4px 6px rgba(0, 0, 0, 0.45));
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  z-index: 32;
+}
+
+.newspaper-dog-ear-left::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: -38px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 36px 0 0 36px;
+  border-color: #d4bf96 transparent transparent transparent;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,0.4);
+}
+
+.newspaper-dog-ear-left:hover {
+  border-width: 0 54px 54px 0;
+  filter: drop-shadow(7px -7px 12px rgba(0, 0, 0, 0.6));
+}
+
+.newspaper-dog-ear-left:hover::after {
+  border-width: 52px 0 0 52px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   3D FLASHCARD NEWSPAPER FLIP STYLES
+   ════════════════════════════════════════════════════════════════ */
+
+.flashcard-wrapper {
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(0.34, 1.15, 0.64, 1);
+  will-change: transform;
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.flashcard-front {
+  transform: rotateY(0deg);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+
 
