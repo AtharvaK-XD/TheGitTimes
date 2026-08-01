@@ -365,7 +365,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               )}
 
               {/* Bottom Page Indicator (Front) */}
-              <div className="relative z-[10] mt-1 pt-1 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+              <div className="relative z-[10] mt-1 pt-1 pl-2 pr-14 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
                 <span>The Git Times</span>
                 {profile.hasPageTwo !== false ? (
                   <button
@@ -475,7 +475,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                 )}
 
                 {/* Bottom Page Indicator (Back) */}
-                <div className="relative z-[10] mt-1 pt-1 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                <div className="relative z-[10] mt-1 pt-1 pl-14 pr-2 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
                   <span>The Git Times</span>
                   <button
                     onClick={handleFlipPage}
