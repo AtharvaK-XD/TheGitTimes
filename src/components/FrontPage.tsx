@@ -22,7 +22,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ profile, onInspectClipping
   const prsUrl = `https://github.com/pulls?q=is%3Apr+author%3A${profile.username}`;
 
   return (
-    <div className="w-full select-text text-ink flex flex-col" style={{ fontSize: '14px' }}>
+    <div className="w-full h-full flex-1 flex flex-col justify-between min-h-0 select-text text-ink" style={{ fontSize: '14px' }}>
 
       {/* ════════════════════════════════════════════════════
           MASTHEAD

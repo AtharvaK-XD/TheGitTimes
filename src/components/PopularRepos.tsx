@@ -21,36 +21,36 @@ export const PopularRepos: React.FC<PopularReposProps> = ({ repos, username }) =
         <span className="text-[8px] text-ink-muted uppercase">Public Dispatch</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
         {repos.map((repo) => (
           <div
             key={repo.name}
-            className="p-2 flex flex-col justify-between transition-all hover:bg-amber-100/30 border border-ink/20"
+            className="p-1.5 sm:p-2 flex flex-col justify-between transition-all hover:bg-amber-100/30 border border-ink/20"
             style={{ background: 'rgba(230,215,188,0.25)' }}
           >
             <div>
               {/* Header: Title + Stars */}
-              <div className="flex items-start justify-between gap-1 mb-1">
+              <div className="flex items-start justify-between gap-1 mb-0.5">
                 <a
                   href={repo.htmlUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => audioEngine.playPaperRustle()}
-                  className="font-extrabold text-[12.5px] text-ink hover:text-amber-900 underline decoration-ink/40 underline-offset-2 flex items-center gap-1 leading-snug"
+                  className="font-extrabold text-[11.5px] sm:text-[12.5px] text-ink hover:text-amber-900 underline decoration-ink/40 underline-offset-2 flex items-center gap-1 leading-snug"
                   title={`View ${repo.name} on GitHub`}
                 >
                   <Code2 className="w-3.5 h-3.5 text-ink-muted flex-shrink-0" />
-                  <span>{repo.name}</span>
+                  <span className="truncate max-w-[140px] sm:max-w-none">{repo.name}</span>
                 </a>
 
-                <div className="flex items-center gap-1 font-mono text-[10px] font-bold text-ink-muted flex-shrink-0">
+                <div className="flex items-center gap-1 font-mono text-[9.5px] sm:text-[10px] font-bold text-ink-muted flex-shrink-0">
                   <Star className="w-3 h-3 text-amber-700 fill-amber-700" />
                   <span>{repo.stars.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="font-serif italic text-[11.5px] text-ink-muted leading-tight mb-2 line-clamp-2">
+              <p className="font-serif italic text-[10.5px] sm:text-[11.5px] text-ink-muted leading-tight mb-1 line-clamp-1 sm:line-clamp-2">
                 "{repo.description}"
               </p>
             </div>

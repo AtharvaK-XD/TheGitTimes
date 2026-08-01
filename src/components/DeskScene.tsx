@@ -243,7 +243,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
       </div>
 
       {/* ═══════ 3D NEWSPAPER HERO SHEET (CENTERED BROADSIDE DESK) ═══════ */}
-      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[82vh] max-h-[820px] flex-shrink-0 perspective-1500 my-auto px-3 sm:px-6">
+      <main className="relative z-[20] w-full max-w-[1140px] xl:max-w-[1220px] mx-auto h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] max-h-[860px] min-h-[560px] flex-shrink-0 perspective-1500 my-auto px-2 sm:px-4 lg:px-6">
         {/* 3D Parallax + Idle Breathing Wrapper */}
         <div
           className="paper-idle-sway h-full w-full flashcard-wrapper"
@@ -265,10 +265,10 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                 FRONT FACE (PAGE 1) - FULL YELLOW NEWSPAPER SHEET
                 ════════════════════════════════════════════════════ */}
             <div
-              className="flashcard-face flashcard-front paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
+              className="flashcard-face flashcard-front paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col justify-between overflow-hidden"
               style={{
                 boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-                padding: 'clamp(12px, 2vw, 24px)',
+                padding: 'clamp(8px, 1.5vw, 18px)',
                 pointerEvents: currentPage === 'front' ? 'auto' : 'none',
               }}
             >
@@ -365,7 +365,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
               )}
 
               {/* Bottom Page Indicator (Front) */}
-              <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+              <div className="relative z-[10] mt-1 pt-1 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
                 <span>The Git Times</span>
                 {profile.hasPageTwo !== false ? (
                   <button
@@ -388,10 +388,10 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                 ════════════════════════════════════════════════════ */}
             {profile.hasPageTwo !== false && (
               <div
-                className="flashcard-face flashcard-back paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col overflow-hidden"
+                className="flashcard-face flashcard-back paper-texture deckled-paper coffee-stain coffee-stain-2 flex flex-col justify-between overflow-hidden"
                 style={{
                   boxShadow: `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.55), ${shadowX * 0.3}px ${shadowY * 0.5}px 15px rgba(0,0,0,0.35), inset 0 0 60px rgba(0,0,0,0.03)`,
-                  padding: 'clamp(12px, 2vw, 24px)',
+                  padding: 'clamp(8px, 1.5vw, 18px)',
                   pointerEvents: currentPage === 'two' ? 'auto' : 'none',
                 }}
               >
@@ -475,7 +475,7 @@ export const DeskScene: React.FC<DeskSceneProps> = ({
                 )}
 
                 {/* Bottom Page Indicator (Back) */}
-                <div className="relative z-[10] mt-2 pt-1.5 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
+                <div className="relative z-[10] mt-1 pt-1 border-t border-ink/30 flex justify-between items-center font-typewriter uppercase tracking-[0.12em] text-ink-muted flex-shrink-0 text-[8px]">
                   <span>The Git Times</span>
                   <button
                     onClick={handleFlipPage}
